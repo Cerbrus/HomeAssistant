@@ -1,0 +1,29 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Home Assistant
+*.log
+*.db
+*.db-shm
+*.db-wal
+home-assistant_v2.db*
+zigbee.db*
+.storage/
+tts/
+.cloud/
+deps/
+__pycache__/
+*.pyc
+secrets.yaml
+known_devices.yaml
+
+# Nginx
+nginx/*.log
