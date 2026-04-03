@@ -1,0 +1,19 @@
+toggle_bathroom_fan:
+  sequence:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.bathroom_fan
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.bathroom_fan
+    data: {}
+  alias: Toggle Bathroom Fan
+  description: ''

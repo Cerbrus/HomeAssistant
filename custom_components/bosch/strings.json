@@ -1,0 +1,70 @@
+{
+    "config": {
+        "title": "Bosch thermostat",
+        "step": {
+            "choose_type": {
+                "title": "Choose device type.",
+                "data": {
+                    "device_type": "Choose type of your device."
+                }
+            },
+            "protocol": {
+              "title": "Bosch IVT Protocol. HTTP is local. XMPP is cloud!",
+              "data": {
+                  "Protocol": "Either http or xmpp"
+              }
+            },
+            "http_config": {
+              "title": "Bosch thermostat HTTP config",
+              "data": {
+                  "address": "IP address",
+                  "access_token": "Access token",
+                  "password": "Password"
+              }
+            },
+            "xmpp_config": {
+                "title": "Bosch thermostat XMPP config",
+                "data": {
+                    "address": "Serial number of device",
+                    "access_token": "Access token",
+                    "password": "Password"
+                }
+              },
+            "easycontrol_serial": {
+                "title": "Bosch EasyControl — POINTT API setup (step 1/2)",
+                "description": "Enter the serial number of your EasyControl device (e.g. 101714742). You can find it on the device label or in the Bosch EasyControl app.",
+                "data": {
+                    "address": "Device serial number"
+                }
+            },
+            "easycontrol_oauth": {
+                "title": "Bosch EasyControl — POINTT API setup (step 2/2)",
+                "description": "1. Open this URL in your browser and log in with your Bosch SingleKey ID account:\n\n{auth_url}\n\n2. After login you will be redirected to a URL starting with `com.bosch.tt.dashtt.pointt://app/login?code=...`. Copy the full URL and paste it below.",
+                "data": {
+                    "redirect_url": "Redirect URL (from browser after login)"
+                }
+            }
+        },
+        "error": {
+            "service_unavailable": "No service available",
+            "invalid_redirect_url": "Could not extract OAuth code from URL. Make sure you paste the full redirect URL.",
+            "cannot_connect": "Token exchange failed. Please try again from step 1."
+        },
+        "abort": {
+            "faulty_credentials": "Bad user credentials or wrong IP",
+            "already_configured": "Controller site is already configured",
+            "unknown": "Unknown reason. Check LOGS."
+        }
+    },
+    "options": {
+        "step": {
+          "init": {
+            "title": "Bosch options",
+            "data": {
+              "new_stats_api": "Use new statistic API",
+              "optimistic_mode": "Use optimistic mode for some functions (currently CT200 Operation mode set)."
+            }
+          }
+        }
+      }
+}

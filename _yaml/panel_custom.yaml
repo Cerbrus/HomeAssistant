@@ -1,0 +1,45 @@
+- name: ha_integrations
+  sidebar_title: Integrations
+  sidebar_icon: mdi:puzzle
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: "config/integrations"
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
+- name: ha_devices
+  sidebar_title: Devices
+  sidebar_icon: mdi:devices
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: "config/devices"
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
+- name: ha_entities
+  sidebar_title: Entities
+  sidebar_icon: mdi:shape
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: "config/entities"
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
+- name: ha_helpers
+  sidebar_title: Helpers
+  sidebar_icon: mdi:tools
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: "config/helpers"
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
+- name: ha_apps
+  sidebar_title: Apps
+  sidebar_icon: mdi:apps
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: "config/apps"
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator

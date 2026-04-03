@@ -1,0 +1,21 @@
+- sensor:
+  - name: "Non-Recyclable Waste Pickup Date"
+    unique_id: non_recyclable_waste_pickup_date
+    state: >
+      {% from 'waste.jinja' import pickup_state %}
+      {{ pickup_state('sensor.twente_milieu_non_recyclable_waste_pickup') }}
+    icon: mdi:calendar
+
+  - name: "Organic Waste Pickup Date"
+    unique_id: organic_waste_pickup_date
+    state: >
+      {% from 'waste.jinja' import pickup_state %}
+      {{ pickup_state('sensor.twente_milieu_organic_waste_pickup') }}
+    icon: mdi:calendar
+
+  - name: "Packages Waste Pickup Date"
+    unique_id: packages_waste_pickup_date
+    state: >
+      {% from 'waste.jinja' import pickup_state %}
+      {{ pickup_state('sensor.twente_milieu_packages_waste_pickup') }}
+    icon: mdi:calendar

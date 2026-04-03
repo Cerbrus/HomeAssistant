@@ -1,0 +1,27 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/sidebar-organizer/sidebar-organizer.js?hacstag=932534411330
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+
+climate: !include _yaml/climate.yaml
+command_line: !include _yaml/command_line.yaml
+input_number: !include _yaml/input_number.yaml
+panel_custom: !include _yaml/panel_custom.yaml
+notify: !include _yaml/notify.yaml
+scene: !include _yaml/scenes.yaml
+switch: !include _yaml/switch.yaml
+template: !include _yaml/templates.yaml
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.32.0/23
+    - 172.30.33.0/24
+    

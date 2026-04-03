@@ -1,0 +1,11 @@
+{% macro pickup_state(sensor_name) %}
+{% set pickup = states(sensor_name) %}
+{% set ts = as_timestamp(pickup) %}
+{% set today = as_timestamp(today_at('00:00')) %}
+{% if ts %}
+{% set days = ((ts - today) / 86400) | round(0) | int %}
+{{ days }}d ({{ ts | timestamp_custom('%d/%b/%Y') }})
+{% else %}
+unknown
+{% endif %}
+{% endmacro %}

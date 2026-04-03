@@ -1,0 +1,14 @@
+{
+  "domain": "bosch",
+  "name": "Bosch thermostat",
+  "documentation": "https://github.com/bosch-thermostat/home-assistant-bosch-custom-component",
+  "issue_tracker": "https://github.com/bosch-thermostat/home-assistant-bosch-custom-component/issues",
+  "dependencies": ["network", "persistent_notification"],
+  "after_dependencies": ["http", "recorder"],
+  "codeowners": ["@pszafer"],
+  "requirements": ["bosch-thermostat-client @ git+https://github.com/deric/bosch-thermostat-client-python.git@k30"],
+  "version": "0.28.2",
+  "zeroconf": ["_buderus._tcp.local."],
+  "config_flow": true,
+  "iot_class": "cloud_polling"
+}
