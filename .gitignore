@@ -10,7 +10,11 @@ Desktop.ini
 *.swo
 
 # Home Assistant
+.HA_VERSION
+.cache/
+.ha_run.lock
 *.log
+*.log.fault
 *.db
 *.db-shm
 *.db-wal
@@ -24,6 +28,10 @@ __pycache__/
 *.pyc
 secrets.yaml
 known_devices.yaml
+image/
+
+# HACS (reinstalled automatically)
+www/community/
 
 # Backups
 backups/
