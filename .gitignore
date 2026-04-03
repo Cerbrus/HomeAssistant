@@ -32,10 +32,11 @@ image/
 
 # HACS (reinstalled automatically)
 www/community/
+custom_components/
 
 # Backups
 backups/
 *.bak
 
-#debugging
-~debugging/
+#Developmen
+~dev/
