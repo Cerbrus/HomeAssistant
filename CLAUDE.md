@@ -2,7 +2,9 @@
 
 ## Project
 - This is a Home Assistant configuration repository running on a **Raspberry Pi 4**
-- `www/404/` contains an nginx 404 error page with an inline animated SVG of the Cerbrus mascot. This is used as custom "Default site" in Nginx. Maps to `/homeassistant/www/404/` on the Pi.
+- `www/404/` contains an nginx 404 error page with an inline animated SVG of the Cerbrus mascot. Maps to `/homeassistant/www/404/` on the Pi.
+- **Reverse proxy**: Nginx Proxy Manager with Let's Encrypt SSL
+- **Media stack**: Plex, Radarr, Sonarr, Bazarr, Prowlarr
 
 ## SVG Work - Key Gotchas
 - **Always trace path coordinates** before placing new elements. SVG paths use relative coords (`c`, `l`) - don't guess positions. Use an agent to compute absolute endpoints when needed.

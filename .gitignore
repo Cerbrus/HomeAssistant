@@ -28,3 +28,6 @@ known_devices.yaml
 # Backups
 backups/
 *.bak
+
+#debugging
+~debugging/
