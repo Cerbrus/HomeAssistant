@@ -27,7 +27,6 @@ custom_groups:
     - core_ssh
     - nginx-proxy-manager
     - 77b2833f_pgadmin4
-    - 0c7296aa_dsmr_reader
   Logs:
     - logbook
     - history
@@ -46,3 +45,4 @@ default_collapsed:
   - Logs
   - Media
   - Devices & Services
+  - Electrical
