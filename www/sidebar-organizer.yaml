@@ -9,6 +9,7 @@ custom_groups:
     - baz-arr
     - prowl-arr
     - media-browser
+    - db21ed7f_transmission_ls
   Devices & Services:
     - config/integrations
     - config/devices
@@ -18,6 +19,7 @@ custom_groups:
     - hacs
   Tools:
     - a0d7b954_vscode
+    - blueprint_studio
     - core_configurator
     - core_ssh
     - nginx-proxy-manager
