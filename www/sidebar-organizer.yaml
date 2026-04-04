@@ -12,6 +12,7 @@ custom_groups:
     - db21ed7f_transmission_ls
   Energy:
     - energy
+    - 0c7296aa_dsmr_reader
   Devices & Services:
     - config/integrations
     - config/devices
