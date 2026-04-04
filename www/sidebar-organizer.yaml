@@ -10,7 +10,7 @@ custom_groups:
     - prowl-arr
     - media-browser
     - db21ed7f_transmission_ls
-  Energy:
+  Electrical:
     - energy
     - 0c7296aa_dsmr_reader
   Devices & Services:
