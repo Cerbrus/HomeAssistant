@@ -29,10 +29,20 @@ __pycache__/
 secrets.yaml
 known_devices.yaml
 image/
+addons_config/
+addons_autoscripts/
+
+# Home Assistant UI generated files
+automations.yaml
+scripts.yaml
+scenes.yaml
 
 # HACS (reinstalled automatically)
-www/community/
-custom_components/
+!**/.managed-by-hacs
+!.managed-by-hacs
+custom_components/**
+themes/**
+www/community/**
 
 # Backups
 backups/

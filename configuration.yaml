@@ -14,7 +14,6 @@ climate: !include _yaml/climate.yaml
 command_line: !include _yaml/command_line.yaml
 input_number: !include _yaml/input_number.yaml
 panel_custom: !include _yaml/panel_custom.yaml
-notify: !include _yaml/notify.yaml
 scene: !include _yaml/scenes.yaml
 switch: !include _yaml/switch.yaml
 template: !include _yaml/templates.yaml
@@ -24,4 +23,3 @@ http:
   trusted_proxies:
     - 172.30.32.0/23
     - 172.30.33.0/24
-    
