@@ -1,0 +1,43 @@
+custom_groups:
+  Daily:
+    - calendar
+    - todo
+  Media:
+    - pl-ex
+    - rad-arr
+    - son-arr
+    - baz-arr
+    - prowl-arr
+    - media-browser
+  Devices & Services:
+    - config/integrations
+    - config/devices
+    - config/entities
+    - config/helpers
+    - config/apps
+    - hacs
+  Tools:
+    - a0d7b954_vscode
+    - core_configurator
+    - core_ssh
+    - nginx-proxy-manager
+    - 77b2833f_pgadmin4
+    - 0c7296aa_dsmr_reader
+  Logs:
+    - logbook
+    - history
+    - config/logs
+animation_off: true
+animation_delay: 0
+pinned_groups:
+  Dashboards: true
+header_title: Welcome, Cerbrus!
+hide_header_toggle: true
+move_settings_from_fixed: false
+force_transparent_background: false
+text_transformation: none
+default_collapsed:
+  - Tools
+  - Logs
+  - Media
+  - Devices & Services
