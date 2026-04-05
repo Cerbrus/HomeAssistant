@@ -1,3 +1,11 @@
+header_title: Welcome, Cerbrus!
+animation_off: true
+animation_delay: 0
+hide_header_toggle: true
+move_settings_from_fixed: false
+force_transparent_background: false
+accordion_mode: true
+text_transformation: none
 custom_groups:
   Daily:
     - calendar
@@ -32,15 +40,8 @@ custom_groups:
     - logbook
     - history
     - config/logs
-animation_off: true
-animation_delay: 0
 pinned_groups:
   Dashboards: true
-header_title: Welcome, Cerbrus!
-hide_header_toggle: true
-move_settings_from_fixed: false
-force_transparent_background: false
-text_transformation: none
 default_collapsed:
   - Tools
   - Logs
