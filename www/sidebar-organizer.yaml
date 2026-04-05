@@ -31,7 +31,6 @@ custom_groups:
     - hacs
   Tools:
     - a0d7b954_vscode
-    - blueprint_studio
     - core_configurator
     - a0d7b954_ssh
     - nginx-proxy-manager
