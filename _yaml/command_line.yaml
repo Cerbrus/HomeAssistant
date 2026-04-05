@@ -11,3 +11,23 @@
     command: "curl -s https://api.ipify.org"
     scan_interval: 300
     unique_id: external_ip_address
+
+- sensor:
+    name: Git Status
+    unique_id: cli_git_status
+    command: "bash /homeassistant/scripts/git_status.sh"
+    value_template: "{{ value_json.state }}"
+    json_attributes:
+      - branch
+      - ahead
+      - behind
+      - commit_hash
+      - commit_message
+      - commit_date
+      - stash_count
+      - has_changes
+      - untracked_files
+      - has_conflicts
+      - should_pull
+      - manual_intervention
+    scan_interval: 300
