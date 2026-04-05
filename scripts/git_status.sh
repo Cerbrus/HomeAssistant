@@ -3,7 +3,7 @@
 # Outputs JSON with repo state, pull recommendation, and intervention flag
 
 REPO_DIR="/homeassistant"
-cd "$REPO_DIR" || echo '{"error":"repo not found"}' && exit 1
+cd "$REPO_DIR" || { echo '{"error":"repo not found"}'; exit 1; }
 
 # Fetch latest remote state (quiet, no output)
 git fetch origin --quiet 2>/dev/null
