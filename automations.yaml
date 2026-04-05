@@ -25,3 +25,15 @@
             - action: switch.turn_off
               target:
                 entity_id: switch.rpi_cooling_fan
+- id: '1775401399136'
+  alias: HA Boot - Notify Discord
+  description: ''
+  triggers:
+    - trigger: homeassistant
+      event: start
+  conditions: []
+  actions:
+    - action: script.ha_online_notify_discord
+      metadata: {}
+      data: {}
+  mode: single

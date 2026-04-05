@@ -1,19 +1,84 @@
 toggle_bathroom_fan:
   sequence:
-  - action: switch.turn_off
-    metadata: {}
-    target:
-      entity_id: switch.bathroom_fan
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
-  - action: switch.turn_on
-    metadata: {}
-    target:
-      entity_id: switch.bathroom_fan
-    data: {}
+    - action: switch.turn_off
+      metadata: {}
+      target:
+        entity_id: switch.bathroom_fan
+      data: {}
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+    - action: switch.turn_on
+      metadata: {}
+      target:
+        entity_id: switch.bathroom_fan
+      data: {}
   alias: Toggle Bathroom Fan
   description: ''
+ha_online_notify_discord:
+  alias: HA Boot - Discord notifier
+  description: Send a notification to Discord stating Home Assistant has booted up,
+    with some statistics
+  sequence:
+    - sequence:
+        - variables:
+            diskFree: '{{ float(states.sensor.home_assistant_host_disk_free.state) }}'
+            diskUsed: '{{ float(states.sensor.home_assistant_host_disk_used.state) }}'
+            diskTotal: '{{ float(states.sensor.home_assistant_host_disk_total.state) }}'
+        - action: notify.cerbrus_home_assistant
+          data:
+            message: ''
+            target:
+              - '995019920582643766'
+            data:
+              embed:
+                title: I just came online!
+                description: ''
+                url: https://ha.cerbrus.nl
+                color: 16771276
+                author:
+                  name: Home Assistant
+                  url: https://ha.cerbrus.nl
+                  icon_url: https://ha.cerbrus.nl/local/icons/cerbrus.png
+                thumbnail:
+                  url: https://ha.cerbrus.nl/local/icons/cerbrus.png
+                fields:
+                  - name: System
+                    inline: false
+                    value: ''
+                  - name: Home Assistant OS Version
+                    inline: false
+                    value: ''
+                  - name: Current
+                    value: '{{states(''sensor.home_assistant_version_current_version'')}}'
+                  - name: Latest
+                    value: '{{states(''sensor.home_assistant_version_home_assistant_versions'')}}'
+                  - name: '{{states(''sensor.date_time_utc'')}}'
+                    value: "{% if is_state(\"update.home_assistant_core_update\", \"on\")
+                %}\n  Update available\n{% else %}\n  No update available\n{% endif
+                %}\n"
+                  - name: AppArmor version
+                    value: '{{states(''sensor.home_assistant_host_apparmor_version'')}}'
+                  - name: IP
+                    inline: false
+                    value: ''
+                  - name: Internal
+                    value: "{{states('sensor.system_monitor_ipv4_address_docker0')}}"
+                  - name: Local
+                    value: "{{states('sensor.system_monitor_ipv4_address_end0')}}"
+                  - name: External
+                    value: "{{states('sensor.external_ip_address')}}"
+                  - name: Disk
+                    inline: false
+                    value: ''
+                  - name: Free
+                    value: '{{states(''sensor.home_assistant_host_disk_free'')}} GB ({{(diskFree / diskTotal * 100) | round(2)}}%)'
+                  - name: Used
+                    value: '{{states(''sensor.home_assistant_host_disk_used'')}} GB ({{(diskUsed / diskTotal * 100) | round(2)}}%)'
+                  - name: Total
+                    value: '{{states(''sensor.home_assistant_host_disk_total'')}} GB'
+                footer:
+                  text: Happy automating!
+                  icon_url: https://ha.cerbrus.nl/local/icons/cerbrus.png

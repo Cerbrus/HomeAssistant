@@ -5,3 +5,9 @@
     # If errors occur, make sure configuration file is encoded as UTF-8
     unit_of_measurement: "°C"
     value_template: "{{ value | multiply(0.001) | round(1) }}"
+
+- sensor:
+    name: External IP Address
+    command: "curl -s https://api.ipify.org"
+    scan_interval: 300
+    unique_id: external_ip_address
