@@ -49,5 +49,4 @@ backups/
 *.bak
 
 # Development
-~dev/
 .claude/
