@@ -65,18 +65,20 @@ ha_online_notify_discord:
                     inline: false
                     value: ''
                   - name: Internal
-                    value: "{{states('sensor.system_monitor_ipv4_address_docker0')}}"
+                    value: '{{states(''sensor.system_monitor_ipv4_address_docker0'')}}'
                   - name: Local
-                    value: "{{states('sensor.system_monitor_ipv4_address_end0')}}"
+                    value: '{{states(''sensor.system_monitor_ipv4_address_end0'')}}'
                   - name: External
-                    value: "{{states('sensor.cli_external_ip_address')}}"
+                    value: '{{states(''sensor.cli_external_ip_address'')}}'
                   - name: Disk
                     inline: false
                     value: ''
                   - name: Free
-                    value: '{{states(''sensor.home_assistant_host_disk_free'')}} GB ({{(diskFree / diskTotal * 100) | round(2)}}%)'
+                    value: '{{states(''sensor.home_assistant_host_disk_free'')}} GB ({{(diskFree
+                / diskTotal * 100) | round(2)}}%)'
                   - name: Used
-                    value: '{{states(''sensor.home_assistant_host_disk_used'')}} GB ({{(diskUsed / diskTotal * 100) | round(2)}}%)'
+                    value: '{{states(''sensor.home_assistant_host_disk_used'')}} GB ({{(diskUsed
+                / diskTotal * 100) | round(2)}}%)'
                   - name: Total
                     value: '{{states(''sensor.home_assistant_host_disk_total'')}} GB'
                 footer:
