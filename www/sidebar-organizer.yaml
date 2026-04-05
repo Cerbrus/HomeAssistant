@@ -4,6 +4,7 @@ custom_groups:
     - todo
   Media:
     - pl-ex
+    - db21ed7f_seerr
     - rad-arr
     - son-arr
     - baz-arr

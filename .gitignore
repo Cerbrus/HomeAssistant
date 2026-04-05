@@ -48,5 +48,6 @@ www/community/**
 backups/
 *.bak
 
-#Developmen
+# Development
 ~dev/
+.claude/
