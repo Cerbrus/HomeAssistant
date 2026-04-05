@@ -125,6 +125,211 @@ function showPun() {
 showPun();
 setInterval(showPun, 10000);
 
+// Pong game
+(function () {
+    const canvas = document.getElementById('pongCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Score
+    let scoreL = 0;
+    let scoreR = 0;
+    const scoreLeftEl = document.getElementById('scoreLeft');
+    const scoreRightEl = document.getElementById('scoreRight');
+
+    // Steak emoji (pre-render to offscreen canvas for performance)
+    const steakSize = 32;
+    const steakCanvas = document.createElement('canvas');
+    steakCanvas.width = steakSize * 2;
+    steakCanvas.height = steakSize * 2;
+    const steakCtx = steakCanvas.getContext('2d');
+    steakCtx.font = `${steakSize}px serif`;
+    steakCtx.textAlign = 'center';
+    steakCtx.textBaseline = 'middle';
+    steakCtx.fillText('🥩', steakSize, steakSize);
+
+    // Ball
+    const ball = {
+        x: W / 2, y: H / 2,
+        vx: 2.5, vy: 1.8,
+        r: 11,
+        trail: []
+    };
+
+    // Paddles (bones)
+    const boneW = 14;
+    const boneH = 70;
+    const knobR = 10;
+    const paddleMargin = 20;
+
+    const padL = { x: paddleMargin, y: H / 2 - boneH / 2, vy: 0 };
+    const padR = { x: W - paddleMargin - boneW, y: H / 2 - boneH / 2, vy: 0 };
+
+    function drawBone(x, y) {
+        const cx = x + boneW / 2;
+        const topY = y;
+        const botY = y + boneH;
+
+        // Shaft
+        ctx.fillStyle = '#e9ecef';
+        ctx.strokeStyle = '#ced4da';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(x, topY + knobR * 0.5, boneW, boneH - knobR, 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Top knobs
+        ctx.fillStyle = '#f1f3f5';
+        ctx.beginPath();
+        ctx.arc(cx - knobR * 0.55, topY + knobR * 0.6, knobR * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx + knobR * 0.55, topY + knobR * 0.6, knobR * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Bottom knobs
+        ctx.beginPath();
+        ctx.arc(cx - knobR * 0.55, botY - knobR * 0.6, knobR * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx + knobR * 0.55, botY - knobR * 0.6, knobR * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Subtle highlight on shaft
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.fillRect(x + 2, topY + knobR, 3, boneH - knobR * 2);
+    }
+
+    function drawCenterLine() {
+        ctx.setLineDash([6, 8]);
+        ctx.strokeStyle = 'rgba(252, 196, 25, 0.12)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(W / 2, 0);
+        ctx.lineTo(W / 2, H);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    function resetBall(dir) {
+        ball.x = W / 2;
+        ball.y = H / 2;
+        ball.vx = 2.5 * dir;
+        ball.vy = (Math.random() - 0.5) * 3;
+        ball.trail = [];
+    }
+
+    // AI paddle movement
+    function aiMove(pad, speed, reaction) {
+        const center = pad.y + boneH / 2;
+        const target = ball.y;
+        const diff = target - center;
+        if (Math.abs(diff) > reaction) {
+            pad.vy = Math.sign(diff) * speed;
+        } else {
+            pad.vy *= 0.8;
+        }
+        pad.y += pad.vy;
+        pad.y = Math.max(0, Math.min(H - boneH, pad.y));
+    }
+
+    function update() {
+        // AI
+        aiMove(padL, 2.2, 8);
+        aiMove(padR, 2.0, 12);
+
+        // Ball trail
+        ball.trail.push({ x: ball.x, y: ball.y });
+        if (ball.trail.length > 8) ball.trail.shift();
+
+        // Move ball
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Top/bottom bounce
+        if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy = Math.abs(ball.vy); }
+        if (ball.y + ball.r > H) { ball.y = H - ball.r; ball.vy = -Math.abs(ball.vy); }
+
+        // Left paddle collision
+        if (ball.vx < 0 &&
+            ball.x - ball.r < padL.x + boneW &&
+            ball.x + ball.r > padL.x &&
+            ball.y > padL.y - knobR &&
+            ball.y < padL.y + boneH + knobR) {
+            ball.x = padL.x + boneW + ball.r;
+            ball.vx = Math.abs(ball.vx) * 1.03;
+            const hitPos = (ball.y - (padL.y + boneH / 2)) / (boneH / 2);
+            ball.vy += hitPos * 1.5;
+        }
+
+        // Right paddle collision
+        if (ball.vx > 0 &&
+            ball.x + ball.r > padR.x &&
+            ball.x - ball.r < padR.x + boneW &&
+            ball.y > padR.y - knobR &&
+            ball.y < padR.y + boneH + knobR) {
+            ball.x = padR.x - ball.r;
+            ball.vx = -Math.abs(ball.vx) * 1.03;
+            const hitPos = (ball.y - (padR.y + boneH / 2)) / (boneH / 2);
+            ball.vy += hitPos * 1.5;
+        }
+
+        // Speed cap
+        const maxSpeed = 6;
+        if (Math.abs(ball.vx) > maxSpeed) ball.vx = maxSpeed * Math.sign(ball.vx);
+        if (Math.abs(ball.vy) > maxSpeed) ball.vy = maxSpeed * Math.sign(ball.vy);
+
+        // Score
+        if (ball.x < -ball.r) {
+            scoreR++;
+            scoreRightEl.textContent = scoreR;
+            resetBall(1);
+        }
+        if (ball.x > W + ball.r) {
+            scoreL++;
+            scoreLeftEl.textContent = scoreL;
+            resetBall(-1);
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        drawCenterLine();
+
+        // Ball trail
+        for (let i = 0; i < ball.trail.length; i++) {
+            const t = ball.trail[i];
+            const alpha = (i / ball.trail.length) * 0.3;
+            ctx.globalAlpha = alpha;
+            ctx.drawImage(steakCanvas, t.x - steakSize / 2, t.y - steakSize / 2, steakSize, steakSize);
+        }
+        ctx.globalAlpha = 1;
+
+        // Ball (steak)
+        ctx.drawImage(steakCanvas, ball.x - steakSize / 2, ball.y - steakSize / 2, steakSize, steakSize);
+
+        // Paddles (bones)
+        drawBone(padL.x, padL.y);
+        drawBone(padR.x, padR.y);
+    }
+
+    function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    resetBall(Math.random() < 0.5 ? 1 : -1);
+    gameLoop();
+})();
+
 // Floating paw prints
 const pawField = document.getElementById('pawField');
 const pawEmojis = ['\uD83D\uDC3E', '\uD83D\uDC3E', '\uD83D\uDC3A', '\uD83E\uDDB4', '\uD83E\uDD69', '\uD83E\uDD69', '\uD83C\uDF56'];

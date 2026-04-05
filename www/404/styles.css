@@ -344,6 +344,43 @@ body {
     font-weight: 600;
 }
 
+/* Pong game */
+.pong-wrapper {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: 340px;
+    z-index: 10;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(252, 196, 25, 0.15);
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(252, 196, 25, 0.03);
+}
+
+#pongCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.pong-score {
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    color: rgba(252, 196, 25, 0.5);
+    letter-spacing: 0.3em;
+    pointer-events: none;
+}
+
+.pong-dash {
+    margin: 0 0.4rem;
+    opacity: 0.4;
+}
+
 /* Pun ticker */
 .pun-ticker {
     background: rgba(252, 196, 25, 0.06);
@@ -426,6 +463,10 @@ body {
 
 /* Responsive */
 @media (max-width: 500px) {
+    .pong-wrapper {
+        display: none;
+    }
+
     .clock-wrapper {
         position: relative;
         top: 0;
