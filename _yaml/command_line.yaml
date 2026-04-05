@@ -8,9 +8,9 @@
 
 - sensor:
     name: External IP Address
+    unique_id: cli_external_ip_address
     command: "curl -s https://api.ipify.org"
     scan_interval: 300
-    unique_id: external_ip_address
 
 - sensor:
     name: Git Status
