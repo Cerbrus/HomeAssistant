@@ -1,6 +1,6 @@
-- id: "1775035001609"
+- id: '1775035001609'
   alias: CPU Fan
-  description: ""
+  description: ''
   triggers:
     - trigger: homeassistant
       event: start

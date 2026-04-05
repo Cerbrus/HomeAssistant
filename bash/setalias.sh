@@ -1,7 +1,0 @@
-alias hostlogin='nsenter --target 1 --mount --uts --ipc --net --pid -- bash'
-alias gs='git status'
-alias gc='git commit'
-alias gp='git push'
-alias gf='git fetch'
-alias gpr='git pull --rebase'
-alias grh='git reset --hard'
