@@ -50,3 +50,7 @@ backups/
 
 # Development
 .claude/
+
+# TypeScript / Node (www/404)
+node_modules/
+*.tsbuildinfo

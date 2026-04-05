@@ -1,0 +1,17 @@
+{
+    "name": "cerbrus-404",
+    "private": true,
+    "scripts": {
+        "build": "node build.mjs",
+        "watch": "node build.mjs --watch"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.0",
+        "typescript": "^5.8.0",
+        "eslint": "~8.48.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-import-resolver-typescript": "^3.6.1",
+        "eslint-plugin-import": "^2.29.1",
+        "prettier": "^2.6.2"
+    }
+}
