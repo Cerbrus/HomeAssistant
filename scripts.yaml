@@ -69,7 +69,7 @@ ha_online_notify_discord:
                   - name: Local
                     value: "{{states('sensor.system_monitor_ipv4_address_end0')}}"
                   - name: External
-                    value: "{{states('sensor.external_ip_address')}}"
+                    value: "{{states('sensor.cli_external_ip_address')}}"
                   - name: Disk
                     inline: false
                     value: ''
