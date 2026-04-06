@@ -15,7 +15,7 @@
 - sensor:
     name: Git Status
     unique_id: cli_git_status
-    command: "cat /config/scripts/git_status.json"
+    command: "/bin/bash /homeassistant/scripts/git_status.sh"
     value_template: "{{ value_json.state }}"
     json_attributes:
       - branch
