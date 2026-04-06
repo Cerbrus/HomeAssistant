@@ -1,0 +1,21 @@
+/* Pun ticker */
+.pun-ticker {
+    background: rgba(252, 196, 25, 0.06);
+    border: 1px solid rgba(252, 196, 25, 0.12);
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    margin: 1.5rem auto;
+    max-width: 500px;
+    font-size: 0.95rem;
+    color: var(--accent-gold);
+    min-height: 3.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s;
+
+    .pun-icon {
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+    }
+}

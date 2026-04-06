@@ -12,7 +12,7 @@
         "moduleResolution": "bundler"
     },
     "include": [
-        "*.ts",
-        "*.js"
+        "**/*.ts",
+        "**/*.js"
     ]
 }

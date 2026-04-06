@@ -1,0 +1,97 @@
+/* Mascot */
+.mascot-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 1rem 0;
+}
+
+/* Floating ring around mascot */
+.mascot-ring {
+    position: absolute;
+    inset: -20px;
+    border: 2px dashed rgba(252, 196, 25, 0.15);
+    border-radius: 50%;
+    animation: rotate 20s linear infinite;
+    pointer-events: none;
+}
+
+/* SVG */
+.mascot-svg {
+    width: clamp(220px, 50vw, 360px);
+    height: auto;
+    filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.5));
+    border-radius: 20px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &:hover {
+        transform: scale(1.05) rotate(-2deg);
+    }
+}
+
+/* Ear twitch */
+.ear {
+    &-left {
+        transform-origin: 36px 25px;
+        animation: earTwitchL 6s infinite ease-in-out;
+    }
+
+    &-right {
+        transform-origin: 99px 25px;
+        animation: earTwitchR 8s infinite ease-in-out;
+    }
+}
+
+/* Eye blink animation */
+.eye-group {
+    &-left {
+        .eye-yellow, .eye-pupil, .eye-ring {
+            transform-origin: 46.508px 61.358px;
+        }
+    }
+
+    &-right {
+        .eye-yellow, .eye-pupil, .eye-ring {
+            /* right eye is mirrored, transform-origin stays in local coords */
+            transform-origin: 46.508px 61.358px;
+        }
+    }
+
+    &-left,
+    &-right {
+        .eye-yellow, .eye-pupil, .eye-ring {
+            animation: blink 4s infinite ease-in-out, blink2 7s infinite ease-in-out;
+        }
+    }
+}
+
+/* Snout breathing */
+.snout-breathe {
+    transform-origin: 67.7px 115px;
+    animation: snoutBreathe 3.5s infinite ease-in-out;
+}
+
+/* Snarl animation - all synced on 10s cycle */
+.snarl-upper {
+    transform-origin: 67.7px 116px;
+    animation: snarlUpper 10s infinite ease-in-out;
+}
+
+.snarl-lower {
+    transform-origin: 67.7px 118px;
+    animation: snarlLower 10s infinite ease-in-out;
+}
+
+.snarl-tongue {
+    animation: tongueReveal 10s infinite ease-in-out;
+    opacity: 0;
+}
+
+.fang {
+    transform-origin: 67.7px 115.5px;
+    animation: fangReveal 10s infinite ease-in-out;
+}
+
+.mouth-cavity {
+    animation: cavityReveal 10s infinite ease-in-out;
+    opacity: 0;
+}

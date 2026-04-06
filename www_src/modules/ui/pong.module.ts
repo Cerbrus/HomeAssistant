@@ -1,3 +1,6 @@
+import { BaseDomModule } from './base-dom.module';
+import { DomHelper } from '../helpers';
+
 interface Point {
     x: number;
     y: number;
@@ -24,42 +27,66 @@ const STEAK_SIZE = 32;
 const MAX_SPEED = 6;
 const TRAIL_LENGTH = 8;
 
-export class PongGame {
-    private readonly canvas: HTMLCanvasElement;
-    private readonly ctx: CanvasRenderingContext2D;
-    private readonly W: number;
-    private readonly H: number;
+export class PongModule extends BaseDomModule {
+    private canvas!: HTMLCanvasElement;
+    private ctx!: CanvasRenderingContext2D;
+    private W!: number;
+    private H!: number;
 
     private scoreL = 0;
     private scoreR = 0;
-    private scoreLeftEl: HTMLElement;
-    private scoreRightEl: HTMLElement;
+    private scoreLeftEl!: HTMLElement;
+    private scoreRightEl!: HTMLElement;
 
-    private readonly steakSprite: HTMLCanvasElement;
+    private steakSprite!: HTMLCanvasElement;
 
-    private readonly ball: Ball;
-    private readonly padL: Paddle;
-    private readonly padR: Paddle;
+    private ball!: Ball;
+    private padL!: Paddle;
+    private padR!: Paddle;
     private rafId = 0;
 
-    constructor(canvasId: string, scoreLeftId: string, scoreRightId: string) {
-        this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+    private readonly test = 123;
+
+    constructor() {
+        super('pongContainer');
+    }
+
+    public destroy(): void {
+        cancelAnimationFrame(this.rafId);
+    }
+
+    protected override init(): void {
+        this.container.classList.add('pong-wrapper');
+
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = 500;
+        this.canvas.height = 300;
+
+        const scoreDiv = DomHelper.el('div', { class: 'pong-score' });
+        this.scoreLeftEl = DomHelper.el('span', { class: 'score-left' }, '0');
+        this.scoreRightEl = DomHelper.el('span', { class: 'score-right' }, '0');
+
+        scoreDiv.append(this.scoreLeftEl, DomHelper.el('span', { class: 'pong-dash' }, '\u2014'), this.scoreRightEl);
+
+        this.container.append(this.canvas, scoreDiv);
+
         this.ctx = this.canvas.getContext('2d')!;
         this.W = this.canvas.width;
         this.H = this.canvas.height;
-        this.scoreLeftEl = document.getElementById(scoreLeftId)!;
-        this.scoreRightEl = document.getElementById(scoreRightId)!;
 
         this.steakSprite = this.createSteakSprite();
 
         this.ball = {
-            x: this.W / 2, y: this.H / 2,
-            vx: 2.5, vy: 1.8,
-            r: 11, trail: []
+            x: this.W / 2,
+            y: this.H / 2,
+            vx: 2.5,
+            vy: 1.8,
+            r: 11,
+            trail: [],
         };
 
-        this.padL = {x: PADDLE_MARGIN, y: this.H / 2 - BONE_H / 2, vy: 0};
-        this.padR = {x: this.W - PADDLE_MARGIN - BONE_W, y: this.H / 2 - BONE_H / 2, vy: 0};
+        this.padL = { x: PADDLE_MARGIN, y: this.H / 2 - BONE_H / 2, vy: 0 };
+        this.padR = { x: this.W - PADDLE_MARGIN - BONE_W, y: this.H / 2 - BONE_H / 2, vy: 0 };
 
         this.resetBall(Math.random() < 0.5 ? 1 : -1);
         this.loop();
@@ -119,7 +146,7 @@ export class PongGame {
         this.aiMove(this.padR, 2.0, 12);
 
         const b = this.ball;
-        b.trail.push({x: b.x, y: b.y});
+        b.trail.push({ x: b.x, y: b.y });
         if (b.trail.length > TRAIL_LENGTH) b.trail.shift();
 
         b.x += b.vx;
@@ -166,7 +193,12 @@ export class PongGame {
         ctx.stroke();
 
         ctx.fillStyle = '#f1f3f5';
-        for (const [ky, sign] of [[y + KNOB_R * 0.6, -1], [y + KNOB_R * 0.6, 1], [botY - KNOB_R * 0.6, -1], [botY - KNOB_R * 0.6, 1]] as [number, number][]) {
+        for (const [ky, sign] of [
+            [y + KNOB_R * 0.6, -1],
+            [y + KNOB_R * 0.6, 1],
+            [botY - KNOB_R * 0.6, -1],
+            [botY - KNOB_R * 0.6, 1],
+        ] as [number, number][]) {
             ctx.beginPath();
             ctx.arc(cx + sign * KNOB_R * 0.55, ky, KNOB_R * 0.7, 0, Math.PI * 2);
             ctx.fill();
@@ -200,20 +232,22 @@ export class PongGame {
         ctx.globalAlpha = 1;
 
         // Ball
-        ctx.drawImage(this.steakSprite, this.ball.x - STEAK_SIZE / 2, this.ball.y - STEAK_SIZE / 2, STEAK_SIZE, STEAK_SIZE);
+        ctx.drawImage(
+            this.steakSprite,
+            this.ball.x - STEAK_SIZE / 2,
+            this.ball.y - STEAK_SIZE / 2,
+            STEAK_SIZE,
+            STEAK_SIZE
+        );
 
         // Paddles
         this.drawBone(this.padL.x, this.padL.y);
         this.drawBone(this.padR.x, this.padR.y);
     }
 
-    private loop = (): void => {
+    private loop(): void {
         this.update();
         this.draw();
-        this.rafId = requestAnimationFrame(this.loop);
-    };
-
-    destroy(): void {
-        cancelAnimationFrame(this.rafId);
+        this.rafId = requestAnimationFrame(this.loop.bind(this));
     }
 }

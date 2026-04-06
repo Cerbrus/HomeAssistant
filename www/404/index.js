@@ -1,44 +1,106 @@
 "use strict";
 (() => {
-  // modules/clock.ts
-  var Clock = class {
-    constructor(elementId) {
-      this.el = document.getElementById(elementId);
-      this.tick();
-      this.interval = window.setInterval(() => this.tick(), 1e3);
+  // modules/ui/base-dom.module.ts
+  var BaseDomModule = class {
+    constructor(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        console.warn(
+          `Container with id "${containerId}" not found. Unable to initialize ${this.constructor.name}.`
+        );
+        return;
+      }
+      this.container = container;
+      this.init();
     }
-    tick() {
-      const now = /* @__PURE__ */ new Date();
-      const h = String(now.getHours()).padStart(2, "0");
-      const m = String(now.getMinutes()).padStart(2, "0");
-      const s = String(now.getSeconds()).padStart(2, "0");
-      this.el.textContent = `${h}:${m}:${s}`;
-    }
-    destroy() {
-      clearInterval(this.interval);
+    query(selector) {
+      return this.container.querySelector(selector);
     }
   };
 
-  // modules/pawField.ts
-  var PAW_EMOJIS = ["\u{1F43E}", "\u{1F43E}", "\u{1F43A}", "\u{1F9B4}", "\u{1F969}", "\u{1F969}", "\u{1F356}"];
-  var PAW_COUNT = 20;
-  var PawField = class {
-    constructor(containerId) {
-      const field = document.getElementById(containerId);
-      for (let i = 0; i < PAW_COUNT; i++) {
-        const paw = document.createElement("div");
-        paw.className = "paw";
-        paw.textContent = PAW_EMOJIS[Math.floor(Math.random() * PAW_EMOJIS.length)];
-        paw.style.left = `${Math.random() * 100}%`;
-        paw.style.animationDelay = `${Math.random() * 12}s`;
-        paw.style.animationDuration = `${8 + Math.random() * 8}s`;
-        paw.style.fontSize = `${1 + Math.random() * 1.5}rem`;
-        field.appendChild(paw);
+  // modules/helpers/dom.helper.ts
+  var DomHelper = class {
+    static el(tag, attrs, text) {
+      const element = document.createElement(tag);
+      if (attrs) {
+        for (const [key, value] of Object.entries(attrs)) {
+          element.setAttribute(key, value);
+        }
+      }
+      if (text) element.textContent = text;
+      return element;
+    }
+  };
+
+  // modules/helpers/array.helper.ts
+  var ArrayHelper = class {
+    static shuffle(array) {
+      let currentIndex = array.length;
+      while (currentIndex != 0) {
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
       }
     }
   };
 
-  // modules/pongGame.ts
+  // modules/ui/clock.module.ts
+  var ClockModule = class extends BaseDomModule {
+    constructor() {
+      super("clockContainer");
+    }
+    destroy() {
+      clearInterval(this.interval);
+    }
+    init() {
+      this.display = DomHelper.el("div", { class: "clock" }, "00:00:00");
+      this.container.append(DomHelper.el("div", { class: "clock-label" }, "Lost since"), this.display);
+      this.container.classList.add("clock-wrapper");
+      this.tick();
+      this.interval = window.setInterval(this.tick.bind(this), 1e3);
+    }
+    tick() {
+      const now = /* @__PURE__ */ new Date();
+      const h = `${now.getHours()}`.padStart(2, "0");
+      const m = `${now.getMinutes()}`.padStart(2, "0");
+      const s = `${now.getSeconds()}`.padStart(2, "0");
+      this.display.textContent = `${h}:${m}:${s}`;
+    }
+  };
+
+  // modules/ui/paw-field.module.ts
+  var PAW_EMOJIS = [
+    "\u{1F43E}",
+    "\u{1F43E}",
+    "\u{1F43A}",
+    "\u{1F9B4}",
+    "\u{1F969}",
+    "\u{1F969}",
+    "\u{1F356}"
+  ];
+  var PAW_COUNT = 20;
+  var PawFieldModule = class extends BaseDomModule {
+    constructor() {
+      super("pawFieldContainer");
+    }
+    init() {
+      this.container.classList.add("paw-field");
+      for (let i = 0; i < PAW_COUNT; i++) {
+        const paw = DomHelper.el(
+          "div",
+          { class: "paw" },
+          PAW_EMOJIS[Math.floor(Math.random() * PAW_EMOJIS.length)]
+        );
+        paw.style.left = `${Math.random() * 100}%`;
+        paw.style.animationDelay = `${Math.random() * 12}s`;
+        paw.style.animationDuration = `${8 + Math.random() * 8}s`;
+        paw.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+        this.container.appendChild(paw);
+      }
+    }
+  };
+
+  // modules/ui/pong.module.ts
   var BONE_W = 14;
   var BONE_H = 70;
   var KNOB_R = 10;
@@ -46,22 +108,30 @@
   var STEAK_SIZE = 32;
   var MAX_SPEED = 6;
   var TRAIL_LENGTH = 8;
-  var PongGame = class {
-    constructor(canvasId, scoreLeftId, scoreRightId) {
+  var PongModule = class extends BaseDomModule {
+    constructor() {
+      super("pongContainer");
       this.scoreL = 0;
       this.scoreR = 0;
       this.rafId = 0;
-      this.loop = () => {
-        this.update();
-        this.draw();
-        this.rafId = requestAnimationFrame(this.loop);
-      };
-      this.canvas = document.getElementById(canvasId);
+      this.test = 123;
+    }
+    destroy() {
+      cancelAnimationFrame(this.rafId);
+    }
+    init() {
+      this.container.classList.add("pong-wrapper");
+      this.canvas = document.createElement("canvas");
+      this.canvas.width = 500;
+      this.canvas.height = 300;
+      const scoreDiv = DomHelper.el("div", { class: "pong-score" });
+      this.scoreLeftEl = DomHelper.el("span", { class: "score-left" }, "0");
+      this.scoreRightEl = DomHelper.el("span", { class: "score-right" }, "0");
+      scoreDiv.append(this.scoreLeftEl, DomHelper.el("span", { class: "pong-dash" }, "\u2014"), this.scoreRightEl);
+      this.container.append(this.canvas, scoreDiv);
       this.ctx = this.canvas.getContext("2d");
       this.W = this.canvas.width;
       this.H = this.canvas.height;
-      this.scoreLeftEl = document.getElementById(scoreLeftId);
-      this.scoreRightEl = document.getElementById(scoreRightId);
       this.steakSprite = this.createSteakSprite();
       this.ball = {
         x: this.W / 2,
@@ -160,7 +230,12 @@
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = "#f1f3f5";
-      for (const [ky, sign] of [[y + KNOB_R * 0.6, -1], [y + KNOB_R * 0.6, 1], [botY - KNOB_R * 0.6, -1], [botY - KNOB_R * 0.6, 1]]) {
+      for (const [ky, sign] of [
+        [y + KNOB_R * 0.6, -1],
+        [y + KNOB_R * 0.6, 1],
+        [botY - KNOB_R * 0.6, -1],
+        [botY - KNOB_R * 0.6, 1]
+      ]) {
         ctx.beginPath();
         ctx.arc(cx + sign * KNOB_R * 0.55, ky, KNOB_R * 0.7, 0, Math.PI * 2);
         ctx.fill();
@@ -186,16 +261,24 @@
         ctx.drawImage(this.steakSprite, t.x - STEAK_SIZE / 2, t.y - STEAK_SIZE / 2, STEAK_SIZE, STEAK_SIZE);
       }
       ctx.globalAlpha = 1;
-      ctx.drawImage(this.steakSprite, this.ball.x - STEAK_SIZE / 2, this.ball.y - STEAK_SIZE / 2, STEAK_SIZE, STEAK_SIZE);
+      ctx.drawImage(
+        this.steakSprite,
+        this.ball.x - STEAK_SIZE / 2,
+        this.ball.y - STEAK_SIZE / 2,
+        STEAK_SIZE,
+        STEAK_SIZE
+      );
       this.drawBone(this.padL.x, this.padL.y);
       this.drawBone(this.padR.x, this.padR.y);
     }
-    destroy() {
-      cancelAnimationFrame(this.rafId);
+    loop() {
+      this.update();
+      this.draw();
+      this.rafId = requestAnimationFrame(this.loop.bind(this));
     }
   };
 
-  // modules/punTicker.ts
+  // modules/ui/pun-ticker.module.ts
   var PUNS = [
     "This page has gone to the dogs.",
     "Fur-oh-fur: destination unknown.",
@@ -222,28 +305,33 @@
     "We've got beef with whoever linked you here.",
     "This page got grilled and didn't survive."
   ];
-  var PunTicker = class {
-    constructor(textId, wrapperId) {
-      this.textEl = document.getElementById(textId);
-      this.wrapperEl = document.getElementById(wrapperId);
-      this.index = Math.floor(Math.random() * PUNS.length);
-      this.show();
-      this.interval = window.setInterval(() => this.show(), 1e4);
-    }
-    show() {
-      this.wrapperEl.style.opacity = "0";
-      setTimeout(() => {
-        this.textEl.textContent = PUNS[this.index];
-        this.wrapperEl.style.opacity = "1";
-        this.index = (this.index + 1) % PUNS.length;
-      }, 400);
+  var PunTickerModule = class extends BaseDomModule {
+    constructor() {
+      super("punTickerContainer");
+      this.index = 0;
     }
     destroy() {
       clearInterval(this.interval);
     }
+    init() {
+      ArrayHelper.shuffle(PUNS);
+      this.textEl = DomHelper.el("span", { class: "pun-text" });
+      this.container.classList.add("pun-ticker");
+      this.container.append(DomHelper.el("span", { class: "pun-icon" }, "\u{1F43A}"), this.textEl);
+      this.show();
+      this.interval = window.setInterval(() => this.show(), 1e4);
+    }
+    show() {
+      this.container.style.opacity = "0";
+      setTimeout(() => {
+        this.textEl.textContent = PUNS[this.index];
+        this.container.style.opacity = "1";
+        this.index = (this.index + 1) % PUNS.length;
+      }, 400);
+    }
   };
 
-  // modules/consoleArt.ts
+  // modules/debug/console.module.ts
   var WOLF_ART = [
     "                                                         :I;+i+.             ",
     "                                                       :t    ..=:            ",
@@ -268,7 +356,7 @@
     " ...::.:....:.........:;.....:=++ItitIRIX+RVYVRRY+...YXIRY;VRRWB:            ",
     ".:;;;...::::;::.:::..........;=;ItiV;IRIYYRRBYBRYiI+.+VRRItXBWR+==           "
   ];
-  var ConsoleArt = class {
+  var ConsoleModule = class {
     constructor() {
       this.print();
     }
@@ -278,7 +366,13 @@
       const hBorder = `${pad}\u2554${"\u2550".repeat(w)}\u2557${pad}`;
       const fBorder = `${pad}\u255A${"\u2550".repeat(w)}\u255D${pad}`;
       const blank = `${pad}\u2551${pad}${" ".repeat(77)}${pad}\u2551${pad}`;
-      const wolf = [hBorder, blank, ...WOLF_ART.map((l) => `${pad}\u2551${pad}${l}${pad}\u2551${pad}`), blank, fBorder];
+      const wolf = [
+        hBorder,
+        blank,
+        ...WOLF_ART.map((l) => `${pad}\u2551${pad}${l}${pad}\u2551${pad}`),
+        blank,
+        fBorder
+      ];
       const purple = "color:#c084fc;font-weight:bold;";
       const amber = "color:#fbbf24;font-weight:bold;";
       const gray = "color:#9ca3af;";
@@ -319,10 +413,11 @@
     }
   };
 
-  // scripts/404.ts
-  new ConsoleArt();
-  new Clock("clock");
-  new PunTicker("punText", "punTicker");
-  new PongGame("pongCanvas", "scoreLeft", "scoreRight");
-  new PawField("pawField");
+  // pages/404.ts
+  new ConsoleModule();
+  new ClockModule();
+  new PunTickerModule();
+  new PongModule();
+  new PawFieldModule();
+  console.log("404 Not Found");
 })();

@@ -3,7 +3,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 # Git status sensor for Home Assistant
 # Outputs JSON with repo state, pull recommendation, and intervention flag
 
-REPO_DIR="/homeassistant"
+REPO_DIR="/config"
 cd "$REPO_DIR" || { echo '{"error":"repo not found"}'; exit 1; }
 
 # Fetch latest remote state (quiet, no output)
