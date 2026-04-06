@@ -62,7 +62,7 @@ main() {
       MANUAL=true
   fi
 
-  cat <<EOF
+  cat <<EOF > /config/scripts/git_status.json
   {
     "state": "${STATE}",
     "branch": "${BRANCH}",
