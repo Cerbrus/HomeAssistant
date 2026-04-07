@@ -68,6 +68,55 @@
     }
   };
 
+  // modules/ui/mascot.module.ts
+  var MascotModule = class extends BaseDomModule {
+    constructor() {
+      super("mascotContainer");
+    }
+    destroy() {
+      document.removeEventListener("mousemove", this.onMouseMove);
+      document.documentElement.removeEventListener("mouseleave", this.onMouseLeave);
+    }
+    init() {
+      this.svg = this.container.querySelector(".mascot-svg");
+      this.leftPupil = this.svg.querySelector(".eye-group-left .eye-pupil");
+      this.rightPupil = this.svg.querySelector(".eye-group-right .eye-pupil");
+      if (!this.svg || !this.leftPupil || !this.rightPupil) return;
+      const iris = this.svg.querySelector(".eye-group-left .eye-yellow");
+      const rightGroup = this.svg.querySelector(".eye-group-right");
+      this.coordinates = {
+        eyeCx: this.leftPupil.cx.baseVal.value,
+        eyeCy: this.leftPupil.cy.baseVal.value,
+        maxOffset: iris.r.baseVal.value - this.leftPupil.r.baseVal.value - 1,
+        mirrorXOffset: rightGroup.transform.baseVal.getItem(0).matrix.e
+      };
+      this.onMouseMove = this.onMouseMove.bind(this);
+      this.onMouseLeave = this.onMouseLeave.bind(this);
+      document.addEventListener("mousemove", this.onMouseMove);
+      document.documentElement.addEventListener("mouseleave", this.onMouseLeave);
+    }
+    onMouseLeave() {
+      this.leftPupil.style.translate = "0 0";
+      this.rightPupil.style.translate = "0 0";
+    }
+    onMouseMove(e) {
+      const pt = this.svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const svgPt = pt.matrixTransform(this.svg.getScreenCTM().inverse());
+      this.movePupil(this.leftPupil, svgPt.x, svgPt.y);
+      this.movePupil(this.rightPupil, this.coordinates.mirrorXOffset - svgPt.x, svgPt.y);
+    }
+    movePupil(pupil, targetX, targetY) {
+      const { eyeCx, eyeCy, maxOffset } = this.coordinates;
+      const dx = targetX - eyeCx;
+      const dy = targetY - eyeCy;
+      const dist = Math.hypot(dx, dy);
+      const clamp = Math.min(dist, maxOffset) / (dist || 1);
+      pupil.style.translate = `${dx * clamp}px ${dy * clamp}px`;
+    }
+  };
+
   // modules/ui/paw-field.module.ts
   var PAW_EMOJIS = [
     "\u{1F43E}",
@@ -435,7 +484,7 @@
   new ConsoleModule();
   new ClockModule();
   new PunTickerModule();
+  new MascotModule();
   new PongModule();
   new PawFieldModule();
-  console.log("404 Not Found");
 })();

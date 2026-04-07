@@ -131,7 +131,7 @@
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .mascot-svg:hover {
-  transform: scale(1.05) rotate(-2deg);
+  transform: scale(1.05);
 }
 .ear-left {
   transform-origin: 36px 25px;
@@ -158,6 +158,10 @@
 .eye-group-right .eye-pupil,
 .eye-group-right .eye-ring {
   animation: blink 4s infinite ease-in-out, blink2 7s infinite ease-in-out;
+}
+.eye-group-left .eye-pupil,
+.eye-group-right .eye-pupil {
+  transition: translate 0.15s ease-out;
 }
 .snout-breathe {
   transform-origin: 67.7px 115px;
