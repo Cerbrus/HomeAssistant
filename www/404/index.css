@@ -214,7 +214,7 @@
     transform: translateY(-10vh) rotate(360deg);
   }
 }
-.pun-ticker {
+#punTickerContainer {
   background: rgba(252, 196, 25, 0.06);
   border: 1px solid rgba(252, 196, 25, 0.12);
   border-radius: 12px;
@@ -229,7 +229,7 @@
   justify-content: center;
   transition: opacity 0.4s;
 }
-.pun-ticker .pun-icon {
+#punTickerContainer .pun-icon {
   margin-right: 0.5rem;
   font-size: 1.2rem;
 }

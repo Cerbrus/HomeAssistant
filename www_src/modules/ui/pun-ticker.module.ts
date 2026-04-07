@@ -44,7 +44,6 @@ export class PunTickerModule extends BaseDomModule {
     protected override init(): void {
         ArrayHelper.shuffle(PUNS);
         this.textEl = DomHelper.el('span', { class: 'pun-text' });
-        this.container.classList.add('pun-ticker');
         this.container.append(DomHelper.el('span', { class: 'pun-icon' }, '\uD83D\uDC3A'), this.textEl);
 
         this.show();

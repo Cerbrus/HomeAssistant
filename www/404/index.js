@@ -114,10 +114,12 @@
       this.scoreL = 0;
       this.scoreR = 0;
       this.rafId = 0;
+      this.running = false;
       this.test = 123;
     }
     destroy() {
-      cancelAnimationFrame(this.rafId);
+      this.stop();
+      this.mql.removeEventListener("change", this.onMediaChange);
     }
     init() {
       this.container.classList.add("pong-wrapper");
@@ -144,7 +146,24 @@
       this.padL = { x: PADDLE_MARGIN, y: this.H / 2 - BONE_H / 2, vy: 0 };
       this.padR = { x: this.W - PADDLE_MARGIN - BONE_W, y: this.H / 2 - BONE_H / 2, vy: 0 };
       this.resetBall(Math.random() < 0.5 ? 1 : -1);
+      this.mql = window.matchMedia("(max-width: 560px)");
+      this.onMediaChange = this.onMediaChange.bind(this);
+      this.mql.addEventListener("change", this.onMediaChange);
+      if (!this.mql.matches) {
+        this.start();
+      }
+    }
+    onMediaChange(e) {
+      e.matches ? this.stop() : this.start();
+    }
+    start() {
+      if (this.running) return;
+      this.running = true;
       this.loop();
+    }
+    stop() {
+      this.running = false;
+      cancelAnimationFrame(this.rafId);
     }
     createSteakSprite() {
       const c = document.createElement("canvas");
@@ -316,7 +335,6 @@
     init() {
       ArrayHelper.shuffle(PUNS);
       this.textEl = DomHelper.el("span", { class: "pun-text" });
-      this.container.classList.add("pun-ticker");
       this.container.append(DomHelper.el("span", { class: "pun-icon" }, "\u{1F43A}"), this.textEl);
       this.show();
       this.interval = window.setInterval(() => this.show(), 1e4);

@@ -44,6 +44,8 @@ export class PongModule extends BaseDomModule {
     private padL!: Paddle;
     private padR!: Paddle;
     private rafId = 0;
+    private running = false;
+    private mql!: MediaQueryList;
 
     private readonly test = 123;
 
@@ -52,7 +54,8 @@ export class PongModule extends BaseDomModule {
     }
 
     public destroy(): void {
-        cancelAnimationFrame(this.rafId);
+        this.stop();
+        this.mql.removeEventListener('change', this.onMediaChange);
     }
 
     protected override init(): void {
@@ -89,7 +92,29 @@ export class PongModule extends BaseDomModule {
         this.padR = { x: this.W - PADDLE_MARGIN - BONE_W, y: this.H / 2 - BONE_H / 2, vy: 0 };
 
         this.resetBall(Math.random() < 0.5 ? 1 : -1);
+
+        this.mql = window.matchMedia('(max-width: 560px)');
+        this.onMediaChange = this.onMediaChange.bind(this);
+        this.mql.addEventListener('change', this.onMediaChange);
+
+        if (!this.mql.matches) {
+            this.start();
+        }
+    }
+
+    private onMediaChange(e: MediaQueryListEvent): void {
+        e.matches ? this.stop() : this.start();
+    }
+
+    private start(): void {
+        if (this.running) return;
+        this.running = true;
         this.loop();
+    }
+
+    private stop(): void {
+        this.running = false;
+        cancelAnimationFrame(this.rafId);
     }
 
     private createSteakSprite(): HTMLCanvasElement {
