@@ -1,0 +1,12 @@
+actions:
+  - name: Bedroom Light
+    background_color: "#000000" # Requires `use_custom_colors`
+    label:
+      text: "Toggle Bedroom Light"
+      color: "#ff0000" # Requires `use_custom_colors`
+    icon:
+      icon: bed
+      color: "#ffffff"
+    show_in_carplay: false
+    show_in_watch: true
+    use_custom_colors: true

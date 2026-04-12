@@ -13,6 +13,7 @@ script: !include scripts.yaml
 climate: !include _yaml/climate.yaml
 command_line: !include _yaml/command_line.yaml
 input_number: !include _yaml/input_number.yaml
+ios: !include _yaml/ios.yaml
 light: !include _yaml/light.yaml
 panel_custom: !include _yaml/panel_custom.yaml
 scene: !include _yaml/scenes.yaml
