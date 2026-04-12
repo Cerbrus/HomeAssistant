@@ -1,0 +1,6 @@
+- platform: ics2000
+  mac: 00:12:a3:02:31:c3
+  email: michiel1900+klikaanklikuit@gmail.com
+  password: !secret klik_aan_klik_uit_password
+  tries: 3  # Optional, defaults to 1
+  sleep: 2  # Optional, defaults to 3
