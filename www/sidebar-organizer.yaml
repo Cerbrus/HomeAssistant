@@ -35,6 +35,7 @@ custom_groups:
     - a0d7b954_ssh
     - nginx-proxy-manager
     - 77b2833f_pgadmin4
+    - cebe7a76_hassio_google_drive_backup
   Logs:
     - logbook
     - history
