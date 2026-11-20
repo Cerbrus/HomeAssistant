@@ -13,6 +13,7 @@ Desktop.ini
 .HA_VERSION
 .cache/
 .ha_run.lock
+.ha_mcp/
 *.log
 *.log.fault
 *.db

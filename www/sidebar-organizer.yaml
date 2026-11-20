@@ -28,7 +28,7 @@ custom_groups:
     - config/entities
     - config/helpers
     - config/apps
-    - hacs
+    - marketplace
   Tools:
     - a0d7b954_vscode
     - core_configurator
