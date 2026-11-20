@@ -43,6 +43,15 @@
   require_admin: true
   config:
     ingress: core_configurator
+- name: ha_marketplace
+  sidebar_title: Marketplace
+  sidebar_icon: mdi:store
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: "marketplace/browse"
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
 - name: ha_logs
   sidebar_title: Logs
   sidebar_icon: mdi:text-box-outline

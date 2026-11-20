@@ -28,7 +28,7 @@ custom_groups:
     - config/entities
     - config/helpers
     - config/apps
-    - marketplace
+    - marketplace/browse
   Tools:
     - a0d7b954_vscode
     - core_configurator
@@ -36,6 +36,8 @@ custom_groups:
     - nginx-proxy-manager
     - 77b2833f_pgadmin4
     - cebe7a76_hassio_google_drive_backup
+    - ha-mcp
+    - a0d7b954_tailscale
   Logs:
     - logbook
     - history
