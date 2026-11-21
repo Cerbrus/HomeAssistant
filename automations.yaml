@@ -433,3 +433,44 @@
       message: No recent backup has reached Google Drive. Check the Google Drive Backup
         app.
   mode: single
+- id: '1795297682448'
+  alias: Heating - Away mode by presence
+  description: Turns the thermostat's away mode on when the phone leaves zone Goor
+    and off when it enters Goor again, so the house is not heated while nobody is
+    in town and warms up during the last minutes of the trip home.
+  triggers:
+  - alias: Cerbrus leaves Goor
+    trigger: zone.left
+    target:
+      entity_id: person.cerbrus
+    options:
+      zone: zone.goor
+    id: left
+  - alias: Cerbrus enters Goor
+    trigger: zone.entered
+    target:
+      entity_id: person.cerbrus
+    options:
+      zone: zone.goor
+    id: entered
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: left
+      sequence:
+      - alias: Turn away mode on
+        action: switch.turn_on
+        target:
+          entity_id: switch.heating_installation_settings_away_mode
+    - conditions:
+      - condition: trigger
+        id: entered
+      sequence:
+      - alias: Turn away mode off
+        action: switch.turn_off
+        target:
+          entity_id: switch.heating_installation_settings_away_mode
+  mode: queued
+  max: 2
