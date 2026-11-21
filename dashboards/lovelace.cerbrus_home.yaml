@@ -373,6 +373,68 @@ config:
     - type: grid
       cards:
       - type: heading
+        heading: Prices
+        icon: mdi:currency-eur
+      - type: tile
+        entity: sensor.energy_price_electricity_all_in
+        name: Electricity now
+        icon: mdi:lightning-bolt
+        color: orange
+        features:
+        - type: trend-graph
+          hours_to_show: 24
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energy_price_electricity_return
+        name: Return now
+        icon: mdi:transmission-tower-export
+        color: green
+        features:
+        - type: trend-graph
+          hours_to_show: 24
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energyzero_today_energy_percentage_of_max
+        name: Share of today's peak
+        icon: mdi:percent
+        features:
+        - type: bar-gauge
+          min: 0
+          max: 100
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energyzero_today_energy_hours_priced_equal_or_lower
+        name: Hours at or below this price
+        icon: mdi:sort-numeric-ascending
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energyzero_today_energy_lowest_price_time
+        name: Cheapest hour
+        icon: mdi:arrow-down-bold-circle-outline
+        color: green
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energyzero_today_energy_highest_price_time
+        name: Most expensive hour
+        icon: mdi:arrow-up-bold-circle-outline
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energy_price_gas_all_in
+        name: Gas today
+        icon: mdi:fire
+        color: red
+        grid_options:
+          columns: 12
+    - type: grid
+      cards:
+      - type: heading
         heading: Today
         icon: mdi:calendar-today
       - type: tile
