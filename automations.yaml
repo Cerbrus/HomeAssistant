@@ -86,14 +86,15 @@
     event: sunrise
     offset: 00:30
     alias: Trigger 30 minutes after sunrise
-  - alias: Trigger every 10 minutes from 8:00 until 9:00
-    trigger: time_pattern
-    hours: '8'
-    minutes: /10
-  - alias: Trigger every 10 minutes from 9:00 until 10:00
-    trigger: time_pattern
-    hours: '9'
-    minutes: /10
+  - alias: Trigger at 8:00
+    trigger: time
+    at: 08:00:00
+  - alias: Trigger when the temperature rises above 5 degrees
+    trigger: numeric_state
+    entity_id: weather.buienradar
+    attribute: temperature
+    above: 5
+    id: temperature_above_5
   conditions:
   - condition: and
     conditions:
@@ -111,6 +112,15 @@
       before: sunset
     - condition: time
       after: 03:00:00
+    - alias: The temperature trigger only counts from 8:00
+      condition: or
+      conditions:
+      - condition: not
+        conditions:
+        - condition: trigger
+          id: temperature_above_5
+      - condition: time
+        after: 08:00:00
   actions:
   - alias: Open both shutters in parallel
     parallel:
@@ -166,4 +176,73 @@
     device_id: 34c956818579dcd31256511c20a2d4cd
     entity_id: 0bce3f968431fd0d445527bda8ba69bb
     domain: switch
+  mode: single
+- id: '1795290692189'
+  alias: Shutters - Automate open (backup)
+  description: Copy of Shutters - Automate open as it was before the temperature trigger
+    replaced the morning polling. Kept disabled as a fallback.
+  triggers:
+  - device_id: ad05755c837a93408b2addf5f3428bd5
+    domain: device_tracker
+    entity_id: 23e9209e33aa806eace56679123e2064
+    type: enters
+    trigger: device
+    zone: zone.home
+    alias: Trigger when Michiel comes home
+  - trigger: sun
+    event: sunrise
+    offset: 00:30
+    alias: Trigger 30 minutes after sunrise
+  - alias: Trigger every 10 minutes from 8:00 until 9:00
+    trigger: time_pattern
+    hours: '8'
+    minutes: /10
+  - alias: Trigger every 10 minutes from 9:00 until 10:00
+    trigger: time_pattern
+    hours: '9'
+    minutes: /10
+  conditions:
+  - condition: and
+    conditions:
+    - condition: numeric_state
+      entity_id: weather.buienradar
+      attribute: temperature
+      above: 5
+      below: 25
+    - condition: device
+      device_id: ad05755c837a93408b2addf5f3428bd5
+      domain: device_tracker
+      entity_id: 23e9209e33aa806eace56679123e2064
+      type: is_home
+    - condition: sun
+      before: sunset
+    - condition: time
+      after: 03:00:00
+  actions:
+  - alias: Open both shutters in parallel
+    parallel:
+    - alias: Open back shutter if it is not open
+      if:
+      - condition: numeric_state
+        entity_id: cover.shutter_back
+        attribute: current_position
+        below: 40
+      then:
+      - device_id: 87fec662ee8dd99a998779420a0df21f
+        domain: cover
+        entity_id: ab8adbecf1dbd16bed4c55fdab901524
+        type: set_position
+        position: 75
+    - alias: Open front shutter if it is not open
+      if:
+      - condition: numeric_state
+        entity_id: cover.shutter_front
+        attribute: current_position
+        below: 40
+      then:
+      - device_id: a04597364adc21334952e4e620432ac3
+        domain: cover
+        entity_id: a06305603ccf50171c809860db3fd263
+        type: set_position
+        position: 75
   mode: single
