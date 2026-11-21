@@ -275,3 +275,161 @@
     data:
       notification_id: http-login
   mode: single
+- id: '1795297052760'
+  alias: Notifications - Freezer socket off or unreachable
+  description: 'Critical alert on the phone when the freezer socket is switched off,
+    and a time-sensitive one when it has been unreachable for 15 minutes. An unreachable
+    socket usually still has power: the Tuya devices lose their address after a DHCP
+    renewal (ADR-0017).'
+  triggers:
+  - alias: Freezer socket has been off for a minute
+    trigger: state
+    entity_id: switch.power_socket_freezer
+    to: 'off'
+    for:
+      minutes: 1
+    id: 'off'
+  - alias: Freezer socket has been unreachable for 15 minutes
+    trigger: state
+    entity_id: switch.power_socket_freezer
+    to: unavailable
+    for:
+      minutes: 15
+    id: unreachable
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - alias: Send a critical alert that the freezer has no power
+        action: notify.mobile_app_iphone_michiel
+        data:
+          title: Freezer socket is OFF
+          message: The freezer has no power. Switch the socket back on.
+          data:
+            push:
+              interruption-level: critical
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+    default:
+    - alias: Send a time-sensitive notification that the socket is unreachable
+      action: notify.mobile_app_iphone_michiel
+      data:
+        title: Freezer socket unreachable
+        message: Home Assistant has not reached the freezer socket for 15 minutes.
+          It probably still has power, but its state is unknown.
+        data:
+          push:
+            interruption-level: time-sensitive
+  mode: single
+- id: '1795297053137'
+  alias: Notifications - Boiler needs attention
+  description: Alerts the phone when the boiler asks for a refill, its pressure stays
+    below 1 bar, or it reports a fault code. A maintenance request is sent as a normal
+    notification, the rest as critical alerts.
+  triggers:
+  - alias: Boiler reports that a refill is needed
+    trigger: state
+    entity_id: binary_sensor.boiler_refill_needed
+    to: 'on'
+    id: refill
+  - alias: System pressure has been below 1 bar for 10 minutes
+    trigger: numeric_state
+    entity_id: sensor.boiler_system_pressure
+    below: 1
+    for:
+      minutes: 10
+    id: pressure
+  - alias: Boiler reports a blocking or locking fault code
+    trigger: state
+    entity_id:
+    - sensor.boiler_blocking_fault_code
+    - sensor.boiler_locking_fault_code
+    not_to:
+    - 'false'
+    - unavailable
+    - unknown
+    id: fault
+  - alias: Boiler requests maintenance
+    trigger: state
+    entity_id: sensor.boiler_maintenance_request
+    not_to:
+    - 'false'
+    - unavailable
+    - unknown
+    id: maintenance
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: maintenance
+      sequence:
+      - alias: Send a normal notification about the maintenance request
+        action: notify.mobile_app_iphone_michiel
+        data:
+          title: Boiler requests maintenance
+          message: 'Maintenance request: {{ trigger.to_state.state }}'
+    default:
+    - alias: Send a critical alert with the sensor and its value
+      action: notify.mobile_app_iphone_michiel
+      data:
+        title: Boiler needs attention
+        message: '{{ trigger.to_state.name }}: {{ trigger.to_state.state }}{{ '' bar''
+          if trigger.id == ''pressure'' else '''' }}'
+        data:
+          push:
+            interruption-level: critical
+            sound:
+              name: default
+              critical: 1
+              volume: 1
+  mode: queued
+  max: 5
+- id: '1795297053471'
+  alias: Notifications - Waste pickup tomorrow
+  description: At 19:00, notifies the phone which bins go out when a Twente Milieu
+    pickup date is tomorrow.
+  triggers:
+  - alias: Every day at 19:00
+    trigger: time
+    at: '19:00:00'
+  conditions:
+  - alias: At least one pickup is tomorrow
+    condition: template
+    value_template: '{{ due | count > 0 }}'
+  actions:
+  - alias: Send the list of bins to put out
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Waste pickup tomorrow
+      message: 'Put out: {{ due | join('', '') }}'
+  variables:
+    due: '{% set bins = {''sensor.twente_milieu_organic_waste_pickup'': ''Organic'',
+      ''sensor.twente_milieu_packages_waste_pickup'': ''Packages'', ''sensor.twente_milieu_non_recyclable_waste_pickup'':
+      ''Residual'', ''sensor.twente_milieu_christmas_tree_pickup'': ''Christmas tree''}
+      %}{% set day = (now().date() + timedelta(days=1)) | string %}{{ bins.items()
+      | selectattr(''0'', ''is_state'', day) | map(attribute=''1'') | list }}'
+  mode: single
+- id: '1795297053822'
+  alias: Notifications - Backups stale
+  description: Notifies the phone when the Google Drive Backup app reports that the
+    backups are stale.
+  triggers:
+  - alias: Backups become stale
+    trigger: state
+    entity_id: binary_sensor.backups_stale
+    to: 'on'
+  conditions: []
+  actions:
+  - alias: Send a notification that backups are stale
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Backups are stale
+      message: No recent backup has reached Google Drive. Check the Google Drive Backup
+        app.
+  mode: single
