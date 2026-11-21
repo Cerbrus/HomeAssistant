@@ -14,6 +14,7 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Light - Turn on front door light at sunset | Sunset | | Turns the front entrance switch on |
 | Light - Turn off front door light at sunrise | Sunrise | | Turns the front entrance switch off |
 | Notifications - Dismiss failed login from trusted network | The "Login attempt failed" notification (`http-login`) is created or replaced | The address in the notification starts with the value of `input_text.login_notification_trusted_prefix` | Dismisses that notification |
+| Heating - Away mode by presence | Person leaves zone Goor; person enters zone Goor | | Leaving turns the thermostat's away mode on, entering turns it off |
 | Notifications - Freezer socket off or unreachable | Freezer socket off for a minute; unreachable for 15 minutes | | Off: critical alert on the phone. Unreachable: time-sensitive notification |
 | Notifications - Boiler needs attention | Refill needed; system pressure below 1 bar for 10 minutes; a blocking or locking fault code; a maintenance request | | Critical alert on the phone with the sensor and its value; the maintenance request as a normal notification |
 | Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
@@ -25,6 +26,7 @@ Notes:
 - The temperature condition keeps the shutters shut on hot days (sun shading) and on cold days (insulation).
 - The temperature trigger opens the shutters later in the day once it gets warmer than 5 °C. Before 08:00 it is ignored, so a warm night does not open them; the 08:00 trigger picks that case up.
 - The backup automation is kept disabled until the new triggers have proven themselves, see [open items](open-items.md).
+- Away mode follows zone Goor, not zone Home: a short trip inside town does not cool the house down, and the heating starts again during the last minutes of the trip home. When the phone stops reporting its location while away, away mode stays on until it reports from Goor again; the switch is on the Heating view.
 - Phone notifications go through the `notify.mobile_app_iphone_michiel` action, not the notify entity: only the action accepts the `push` data that makes an alert critical or time-sensitive.
 - An unreachable freezer socket is not treated as a power loss. The Tuya devices can lose their address after a DHCP renewal ([ADR-0017](adr/0017-tuya-dynamic-leases-until-new-modem.md)), and the socket keeps its power then.
 - Home Assistant has no setting to leave addresses out of the "Login attempt failed" notification, so the dismiss automation removes it afterwards. The warning from `homeassistant.components.http.ban` stays in the log. The trusted prefix is IPv4 only and lives in a UI helper, which keeps the address out of this repository.
