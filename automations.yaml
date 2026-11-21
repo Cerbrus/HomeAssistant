@@ -10,21 +10,6 @@
     metadata: {}
     data: {}
   mode: single
-- id: '1776016632067'
-  alias: Toggle Bedroom Light
-  description: Toggle Bedroom Light
-  triggers:
-  - event_type: ios.action_fired
-    event_data:
-      actionName: Bedroom Light
-    trigger: event
-  actions:
-  - action: light.toggle
-    target:
-      entity_id:
-      - light.lamp
-    data: {}
-  initial_state: true
 - id: '1776017712312'
   alias: Shutters - Automate close
   description: ''
