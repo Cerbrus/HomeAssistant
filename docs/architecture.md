@@ -61,7 +61,8 @@ flowchart LR
 
 - This repository mirrors the Pi's `/config` directory ([ADR-0004](adr/0004-config-in-git-git-pull-deploy.md)).
 - YAML edits go from the PC to GitHub, the Git pull app brings them onto the Pi.
-- Changes made in the HA UI (automations, scripts) land in files on the Pi and are committed from there.
+- Changes made in the HA UI (automations, scripts) land in files on the Pi and are committed and pushed from there, with a deploy key for this repository ([ADR-0023](adr/0023-commit-ui-edits-on-the-pi.md)).
+- An uncommitted UI edit to a file that a pull also changes stops the Git pull app. Commit on the Pi first, then start the app again.
 - Claude Code manages the running instance through HA-MCP ([ADR-0014](adr/0014-ha-mcp-in-process-lan-only.md)).
 
 ## Backups

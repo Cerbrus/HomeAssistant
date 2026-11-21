@@ -28,6 +28,7 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0020](0020-redacted-dashboard-clone.md) | 2026-11-21 | Keep a redacted clone of the dashboards in the repository | Recorded |
 | [0021](0021-cloud-integrations-bosch-solis.md) | 2026-11-20 | Use cloud integrations for the Bosch thermostat and the Solis inverter | Backfilled, confirmed |
 | [0022](0022-npm-theme-injected-at-end-of-body.md) | 2026-11-21 | Inject the Nginx Proxy Manager theme at the end of the body | Recorded |
+| [0023](0023-commit-ui-edits-on-the-pi.md) | 2026-11-21 | Commit UI edits on the Pi and push them with a deploy key | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 
