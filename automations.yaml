@@ -246,3 +246,32 @@
         type: set_position
         position: 75
   mode: single
+- id: '1795295627969'
+  alias: Notifications - Dismiss failed login from trusted network
+  description: Dismisses the "Login attempt failed" notification when the address
+    in it starts with the prefix in input_text.login_notification_trusted_prefix.
+    The warning stays in the log.
+  triggers:
+  - alias: Trigger when the failed login notification is created or replaced
+    trigger: persistent_notification
+    notification_id: http-login
+    update_type:
+    - added
+    - updated
+  conditions:
+  - alias: The address in the notification starts with the trusted prefix
+    condition: template
+    value_template: '{% set prefix = states(''input_text.login_notification_trusted_prefix'')
+      %}
+
+      {% set address = trigger.notification.message | regex_findall(''\(([0-9a-fA-F.:]+)\)'')
+      | last | default('''', true) %}
+
+      {{ has_value(''input_text.login_notification_trusted_prefix'') and prefix |
+      length >= 4 and address.startswith(prefix) }}'
+  actions:
+  - alias: Dismiss the failed login notification
+    action: persistent_notification.dismiss
+    data:
+      notification_id: http-login
+  mode: single

@@ -13,6 +13,7 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Shutters - Automate open (backup) | Disabled. Copy of the previous version: every 10 minutes between 08:00 and 10:00 instead of the 08:00 and temperature triggers | As above, without the 08:00 rule | As above |
 | Light - Turn on front door light at sunset | Sunset | | Turns the front entrance switch on |
 | Light - Turn off front door light at sunrise | Sunrise | | Turns the front entrance switch off |
+| Notifications - Dismiss failed login from trusted network | The "Login attempt failed" notification (`http-login`) is created or replaced | The address in the notification starts with the value of `input_text.login_notification_trusted_prefix` | Dismisses that notification |
 
 Notes:
 
@@ -20,6 +21,7 @@ Notes:
 - The temperature condition keeps the shutters shut on hot days (sun shading) and on cold days (insulation).
 - The temperature trigger opens the shutters later in the day once it gets warmer than 5 °C. Before 08:00 it is ignored, so a warm night does not open them; the 08:00 trigger picks that case up.
 - The backup automation is kept disabled until the new triggers have proven themselves, see [open items](open-items.md).
+- Home Assistant has no setting to leave addresses out of the "Login attempt failed" notification, so the dismiss automation removes it afterwards. The warning from `homeassistant.components.http.ban` stays in the log. The trusted prefix is IPv4 only and lives in a UI helper, which keeps the address out of this repository.
 
 ## Scripts
 
@@ -41,6 +43,7 @@ Notes:
 | `sensor.cpu_temperature` | `_yaml/command_line.yaml` | CPU temperature of the Pi |
 | `sensor.external_ip_address` | `_yaml/command_line.yaml` | Public address, refreshed every five minutes |
 | `input_number.zero_value` | `_yaml/input_number.yaml` | Constant zero for dashboard cards |
+| `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed |
 
 ## iOS actions
 
