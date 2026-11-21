@@ -854,6 +854,13 @@ config:
       - type: heading
         heading: Now playing
         icon: mdi:play-circle
+      - type: tile
+        entity: sensor.media_cerbrus
+        name: Plex watching
+        icon: mdi:plex
+        color: amber
+        grid_options:
+          columns: 12
       - type: media-control
         entity: media_player.living_room_tv
         grid_options:

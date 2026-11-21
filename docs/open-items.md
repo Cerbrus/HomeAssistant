@@ -12,7 +12,6 @@ Loose ends that are known and not yet handled. Remove an item when it is handled
 
 ## Media
 
-- **Plex integration** is not added yet: it needs a plex.tv sign-in in the browser. Once added, put its now-playing player on the Media view.
 - **Disk space sensors** of Radarr and Transmission read 0. Find out why before putting them on the Media view.
 
 ## Network
