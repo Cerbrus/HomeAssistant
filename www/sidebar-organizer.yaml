@@ -17,12 +17,12 @@ custom_groups:
     - son-arr
     - baz-arr
     - prowl-arr
-    - media-browser
     - db21ed7f_transmission_ls
-  Electrical:
+    - media-browser
+  Energy:
     - energy
     - 0c7296aa_dsmr_reader
-  Devices & Services:
+  Apps & Devices:
     - config/integrations
     - config/devices
     - config/entities
@@ -31,22 +31,18 @@ custom_groups:
     - marketplace/browse
   Tools:
     - a0d7b954_vscode
-    - core_configurator
     - a0d7b954_ssh
-    - nginx-proxy-manager
     - 77b2833f_pgadmin4
-    - cebe7a76_hassio_google_drive_backup
-    - ha-mcp
+    - nginx-proxy-manager
     - a0d7b954_tailscale
-  Logs:
+    - cebe7a76_hassio_google_drive_backup
+  Activity:
     - logbook
     - history
     - config/logs
-pinned_groups:
-  Dashboards: true
 default_collapsed:
   - Tools
-  - Logs
+  - Activity
   - Media
-  - Devices & Services
-  - Electrical
+  - Apps & Devices
+  - Energy
