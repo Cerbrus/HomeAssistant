@@ -21,7 +21,6 @@
 | `_yaml/climate.yaml` | Generic thermostat that drives the Pi's cooling fan |
 | `_yaml/command_line.yaml` | CPU temperature sensor, external IP address sensor |
 | `_yaml/input_number.yaml` | `input_number.zero_value`, a constant for dashboard cards |
-| `_yaml/ios.yaml` | Apple Watch / iOS action "Bedroom Light" |
 | `_yaml/light.yaml` | KlikAanKlikUit lights through the ICS-2000 hub |
 | `_yaml/panel_custom.yaml` | Sidebar shortcuts into settings pages |
 | `_yaml/scenes.yaml` | Empty |

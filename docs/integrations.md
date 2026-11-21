@@ -20,7 +20,7 @@
 | Plex Media Server | Core | UI | Number of active streams; a media player per client while it plays |
 | Radarr, Sonarr | Core | UI | Upcoming movies and episodes as calendars, health, queue |
 | Transmission | Core | UI | Download and upload speed, torrent counts, start/stop and turtle mode switches |
-| Mobile App, iOS | Core | UI, `_yaml/ios.yaml` | Phone presence, notifications, watch action |
+| Mobile App, iOS | Core | UI | Phone presence, notifications |
 
 ## Information sources
 

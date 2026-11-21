@@ -7,7 +7,6 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Automation | Triggers | Conditions | Action |
 | --- | --- | --- | --- |
 | HA Boot - Notify Discord | Home Assistant start | | Runs `script.ha_online_notify_discord` |
-| Toggle Bedroom Light | iOS / watch action "Bedroom Light" | | Toggles `light.lamp` |
 | Shutters - Automate close | Phone leaves zone Goor; 30 minutes after sunset; midnight | | Sets each shutter to position 10 when it is above 10 |
 | Shutters - Automate open | Phone enters zone Home; 30 minutes after sunrise; 08:00; Buienradar temperature rises above 5 °C | Buienradar temperature between 5 and 25 °C, phone is home, before sunset, after 03:00; the temperature trigger only counts from 08:00 | Sets each shutter to position 75 when it is below 40 |
 | Shutters - Automate open (backup) | Disabled. Copy of the previous version: every 10 minutes between 08:00 and 10:00 instead of the 08:00 and temperature triggers | As above, without the 08:00 rule | As above |
@@ -56,10 +55,6 @@ Notes:
 | `input_number.energy_price_electricity_energy_tax`, `input_number.energy_price_gas_energy_tax` | UI helpers | Energy tax per kWh and per m³, including VAT |
 | `sensor.energy_price_electricity_all_in`, `sensor.energy_price_gas_all_in` | UI template helpers | EnergyZero market price plus purchase fee and energy tax; the Energy dashboard's consumption prices |
 | `sensor.energy_price_electricity_return` | UI template helper | EnergyZero market price without additions; the Energy dashboard's return price |
-
-## iOS actions
-
-`_yaml/ios.yaml` defines the action "Bedroom Light", shown on the Apple Watch. It fires the `ios.action_fired` event that the Toggle Bedroom Light automation listens to.
 
 ## Blueprints
 
