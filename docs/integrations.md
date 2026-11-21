@@ -17,6 +17,8 @@
 | IPP | Core | UI | Printer ink levels |
 | Pi-hole | Core | UI | DNS statistics and switch |
 | Raspberry Pi GPIO | Marketplace | `_yaml/switch.yaml` | Cooling fan switch |
+| Radarr, Sonarr | Core | UI | Upcoming movies and episodes as calendars, health, queue |
+| Transmission | Core | UI | Download and upload speed, torrent counts, start/stop and turtle mode switches |
 | Mobile App, iOS | Core | UI, `_yaml/ios.yaml` | Phone presence, notifications, watch action |
 
 ## Information sources
@@ -28,6 +30,7 @@
 | Twente Milieu | Waste pickup dates |
 | Google Calendar | Calendars |
 | Sun | Sunrise and sunset triggers |
+| EnergyZero | Hourly electricity and daily gas market prices for the energy cost ([ADR-0024](adr/0024-energy-cost-energyzero-plus-markup.md)) |
 
 ## System
 
@@ -47,9 +50,17 @@
 | --- | --- |
 | Grid, tariff 1 and 2 | DSMR Reader delivered and returned readings |
 | Solar | Solis inverter total energy, with the Forecast.Solar forecast |
-| Gas | DSMR Reader gas reading and the extra-device reading |
+| Gas | DSMR Reader gas reading |
 
-No individual device consumption and no cost tracking are configured.
+Cost is tracked with price entities ([ADR-0024](adr/0024-energy-cost-energyzero-plus-markup.md)):
+
+| Source | Price entity |
+| --- | --- |
+| Grid consumption, both tariffs | `sensor.energy_price_electricity_all_in` |
+| Grid return, both tariffs | `sensor.energy_price_electricity_return` |
+| Gas | `sensor.energy_price_gas_all_in` |
+
+No individual device consumption is configured.
 
 ## Marketplace frontend downloads
 

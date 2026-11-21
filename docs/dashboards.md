@@ -10,7 +10,7 @@ Dashboards are edited in the UI (storage mode). A redacted clone of their config
 
 | Dashboard | Path | Access | Type |
 | --- | --- | --- | --- |
-| Home | `cerbrus-home` | Everyone | Main dashboard with the views Home, Energy, Heating, Weather and System |
+| Home | `cerbrus-home` | Everyone | Main dashboard with the views Home, Energy, Heating, Weather, Media and System |
 | Map | `map` | Everyone, hidden from the sidebar | Built-in map |
 | Plex | `pl-ex` | Admin | Iframe |
 | Movies - Radarr | `rad-arr` | Admin | Iframe |
@@ -18,6 +18,8 @@ Dashboards are edited in the UI (storage mode). A redacted clone of their config
 | Subtitles - Bazarr | `baz-arr` | Admin | Iframe |
 | Indexers - Prowlarr | `prowl-arr` | Admin | Iframe |
 | Nginx Proxy Manager | `nginx-proxy-manager` | Admin | Iframe |
+
+The Media view shows what the media stack is doing without opening the apps: upcoming episodes and movies from the Sonarr and Radarr calendars, Transmission's speeds, torrent counts and switches, and what is playing on the TV and Spotify. It uses built-in cards only.
 
 The iframe dashboards use the `iframe` dashboard strategy and load the app's public `cerbrus.nl` host name. Their paths contain a hyphen because Home Assistant requires one in dashboard paths.
 

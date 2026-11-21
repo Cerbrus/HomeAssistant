@@ -29,6 +29,7 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0021](0021-cloud-integrations-bosch-solis.md) | 2026-11-20 | Use cloud integrations for the Bosch thermostat and the Solis inverter | Backfilled, confirmed |
 | [0022](0022-npm-theme-injected-at-end-of-body.md) | 2026-11-21 | Inject the Nginx Proxy Manager theme at the end of the body | Recorded |
 | [0023](0023-commit-ui-edits-on-the-pi.md) | 2026-11-21 | Commit UI edits on the Pi and push them with a deploy key | Recorded |
+| [0024](0024-energy-cost-energyzero-plus-markup.md) | 2026-11-21 | Price energy with EnergyZero market prices plus an own markup | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 

@@ -14,6 +14,10 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Light - Turn on front door light at sunset | Sunset | | Turns the front entrance switch on |
 | Light - Turn off front door light at sunrise | Sunrise | | Turns the front entrance switch off |
 | Notifications - Dismiss failed login from trusted network | The "Login attempt failed" notification (`http-login`) is created or replaced | The address in the notification starts with the value of `input_text.login_notification_trusted_prefix` | Dismisses that notification |
+| Notifications - Freezer socket off or unreachable | Freezer socket off for a minute; unreachable for 15 minutes | | Off: critical alert on the phone. Unreachable: time-sensitive notification |
+| Notifications - Boiler needs attention | Refill needed; system pressure below 1 bar for 10 minutes; a blocking or locking fault code; a maintenance request | | Critical alert on the phone with the sensor and its value; the maintenance request as a normal notification |
+| Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
+| Notifications - Backups stale | The Google Drive Backup app reports stale backups | | Notifies the phone |
 
 Notes:
 
@@ -21,6 +25,8 @@ Notes:
 - The temperature condition keeps the shutters shut on hot days (sun shading) and on cold days (insulation).
 - The temperature trigger opens the shutters later in the day once it gets warmer than 5 °C. Before 08:00 it is ignored, so a warm night does not open them; the 08:00 trigger picks that case up.
 - The backup automation is kept disabled until the new triggers have proven themselves, see [open items](open-items.md).
+- Phone notifications go through the `notify.mobile_app_iphone_michiel` action, not the notify entity: only the action accepts the `push` data that makes an alert critical or time-sensitive.
+- An unreachable freezer socket is not treated as a power loss. The Tuya devices can lose their address after a DHCP renewal ([ADR-0017](adr/0017-tuya-dynamic-leases-until-new-modem.md)), and the socket keeps its power then.
 - Home Assistant has no setting to leave addresses out of the "Login attempt failed" notification, so the dismiss automation removes it afterwards. The warning from `homeassistant.components.http.ban` stays in the log. The trusted prefix is IPv4 only and lives in a UI helper, which keeps the address out of this repository.
 
 ## Scripts
@@ -44,6 +50,10 @@ Notes:
 | `sensor.external_ip_address` | `_yaml/command_line.yaml` | Public address, refreshed every five minutes |
 | `input_number.zero_value` | `_yaml/input_number.yaml` | Constant zero for dashboard cards |
 | `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed |
+| `input_number.energy_price_electricity_purchase_fee`, `input_number.energy_price_gas_purchase_fee` | UI helpers | The supplier's purchase fee per kWh and per m³, including VAT |
+| `input_number.energy_price_electricity_energy_tax`, `input_number.energy_price_gas_energy_tax` | UI helpers | Energy tax per kWh and per m³, including VAT |
+| `sensor.energy_price_electricity_all_in`, `sensor.energy_price_gas_all_in` | UI template helpers | EnergyZero market price plus purchase fee and energy tax; the Energy dashboard's consumption prices |
+| `sensor.energy_price_electricity_return` | UI template helper | EnergyZero market price without additions; the Energy dashboard's return price |
 
 ## iOS actions
 

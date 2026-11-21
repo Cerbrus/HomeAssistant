@@ -23,6 +23,7 @@
 | Utility room | Power socket - Freezer | Tuya Local | `switch.power_socket_freezer` |
 | Utility room | 3D printer | OctoPrint | Usually off |
 | Network | Pi-hole | Pi-hole | |
+| Media | Radarr, Sonarr, Transmission | Radarr, Sonarr, Transmission | Service devices of the media apps |
 | No area | EasyControl gateway, heating zone, boiler, hot water tank | Bosch | |
 | No area | Solar inverter | SolisCloud | |
 | No area | Smart meter | DSMR Reader | |
