@@ -1,0 +1,16 @@
+items:
+- id: 2c70849caa8346828e7e93d30c287d11
+  url: /local/community/pi-hole-card/pi-hole-card.js?v=977675079-0.29.0
+  type: module
+- id: a0f1aab079e84e6a8d93cb09c7337750
+  url: /local/community/lovelace-mushroom/mushroom.js?v=444350375-v5.3.0
+  type: module
+- id: aa0e82672db74512818182214ca70d0c
+  url: /local/community/Bubble-Card/bubble-card.js?v=680112919-v3.4.3
+  type: module
+- id: 4714135ac3b64ba98c12956138c1c628
+  url: /local/community/weather-radar-card/weather-radar-card.js?v=487680971-v4.0.0
+  type: module
+- id: 4a376120e24043cabd830d6491614fe7
+  url: /local/community/power-flow-card-plus/power-flow-card-plus.js?v=618081815-v0.6.1
+  type: module

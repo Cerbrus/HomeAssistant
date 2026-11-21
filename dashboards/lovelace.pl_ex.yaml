@@ -1,0 +1,4 @@
+config:
+  strategy:
+    type: iframe
+    url: https://plex.cerbrus.nl

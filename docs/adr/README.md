@@ -1,0 +1,52 @@
+# Architecture decision records
+
+One file per decision, numbered in the order the decisions were taken. A decision recorded later than it was taken gets the next free number and its real date.
+
+## Index
+
+| ADR | Date | Decision | Origin |
+| --- | --- | --- | --- |
+| [0001](0001-single-pi-hosts-everything.md) | 2026-03-30 | Host everything on one Raspberry Pi running Home Assistant OS | Backfilled, confirmed |
+| [0002](0002-public-access-duckdns-npm.md) | 2026-03-30 | Publish services on an own domain through DuckDNS and Nginx Proxy Manager | Backfilled, confirmed |
+| [0003](0003-tuya-local-over-tuya-cloud.md) | 2026-04-02 | Control Tuya devices with Tuya Local instead of the Tuya cloud integration | Backfilled, confirmed |
+| [0004](0004-config-in-git-git-pull-deploy.md) | 2026-04-03 | Keep the configuration in a public git repository and deploy with the Git pull app | Backfilled, confirmed |
+| [0005](0005-yaml-split-per-domain.md) | 2026-04-03 | Split YAML configuration into one file per domain under `_yaml/` | Backfilled, confirmed |
+| [0006](0006-sidebar-as-main-navigation.md) | 2026-04-04 | Use the Home Assistant sidebar as the navigation for the whole homelab | Backfilled, confirmed |
+| [0007](0007-ui-config-over-yaml.md) | 2026-04-04 | Configure integrations in the UI when a config flow exists (deprecated) | Backfilled, confirmed |
+| [0008](0008-energy-via-dsmr-reader.md) | 2026-04-04 | Read the smart meter with the DSMR Reader app over MQTT | Backfilled, confirmed |
+| [0009](0009-pi-fan-generic-thermostat.md) | 2026-04-05 | Drive the Pi's cooling fan with a generic thermostat | Backfilled, confirmed |
+| [0010](0010-404-page-out-of-repo.md) | 2026-04-11 | Keep the custom 404 page out of this repository | Backfilled, confirmed |
+| [0011](0011-offsite-backups-google-drive.md) | 2026-04-14 | Copy backups off-site to Google Drive | Backfilled, confirmed |
+| [0012](0012-split-horizon-dns.md) | 2026-06-23 | Resolve `cerbrus.nl` to the Pi inside the LAN | Recorded |
+| [0013](0013-npm-only-public-entry.md) | 2026-11-20 | Make Nginx Proxy Manager the only entry from the internet | Recorded |
+| [0014](0014-ha-mcp-in-process-lan-only.md) | 2026-11-20 | Run HA-MCP as an integration inside Home Assistant, LAN only | Recorded |
+| [0015](0015-marketplace-migration.md) | 2026-11-20 | Move from HACS to the built-in Marketplace and drop the git status sensor | Recorded |
+| [0016](0016-bathroom-fan-power-cycle.md) | 2026-11-20 | Control the bathroom fan by power-cycling it | Recorded |
+| [0017](0017-tuya-dynamic-leases-until-new-modem.md) | 2026-11-21 | Leave the Tuya devices on dynamic addresses until the new modem arrives | Recorded |
+| [0018](0018-use-adrs-and-living-docs.md) | 2026-11-21 | Record decisions as ADRs and keep the documentation current | Recorded |
+| [0019](0019-lean-marketplace.md) | 2026-11-21 | Keep only what is in use, add Marketplace cards on confirmation | Recorded |
+| [0020](0020-redacted-dashboard-clone.md) | 2026-11-21 | Keep a redacted clone of the dashboards in the repository | Recorded |
+| [0021](0021-cloud-integrations-bosch-solis.md) | 2026-11-20 | Use cloud integrations for the Bosch thermostat and the Solis inverter | Backfilled, confirmed |
+| [0022](0022-npm-theme-injected-at-end-of-body.md) | 2026-11-21 | Inject the Nginx Proxy Manager theme at the end of the body | Recorded |
+
+"Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
+
+## When to write one
+
+Write an ADR when a change settles a choice between real alternatives and someone could later ask "why is it like this?":
+
+- adding, replacing or removing an integration, app or device type
+- changing how the instance is reached, deployed, backed up or secured
+- a convention for the configuration (structure, naming, where something is configured)
+- behaviour that looks wrong but is intended
+- a deliberate decision to leave something as it is
+
+No ADR for routine work: a new automation that follows existing patterns, version updates, dashboard tweaks, bug fixes.
+
+## How
+
+1. Copy [template.md](template.md) to `NNNN-short-title.md` with the next free number.
+2. Fill it in. Keep it short; the context and the consequences matter most.
+3. Add a row to the index above.
+4. Never rewrite an accepted ADR's decision. To change course, write a new ADR and set the old one's status to `Superseded by ADR-NNNN`. Fixing facts or confirming a backfilled rationale is fine.
+5. Keep the privacy rule from [docs/README.md](../README.md#privacy): no addresses, coordinates, account names or secrets.

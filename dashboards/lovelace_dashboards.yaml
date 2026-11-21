@@ -1,0 +1,57 @@
+items:
+- id: map
+  icon: mdi:map
+  title: Map
+  url_path: map
+  show_in_sidebar: false
+  require_admin: false
+  mode: storage
+- id: cerbrus_home
+  show_in_sidebar: true
+  icon: mdi:home-assistant
+  title: Home
+  require_admin: false
+  mode: storage
+  url_path: cerbrus-home
+- id: nginx_proxy_manager
+  show_in_sidebar: true
+  icon: mdi:arrow-decision
+  title: Nginx Proxy Manager
+  require_admin: true
+  mode: storage
+  url_path: nginx-proxy-manager
+- id: son_arr
+  show_in_sidebar: true
+  icon: mdi:waveform
+  title: TV - Sonarr
+  require_admin: true
+  mode: storage
+  url_path: son-arr
+- id: prowl_arr
+  show_in_sidebar: true
+  icon: mdi:cat
+  title: Indexers - Prowlarr
+  require_admin: true
+  mode: storage
+  url_path: prowl-arr
+- id: rad_arr
+  show_in_sidebar: true
+  icon: mdi:radar
+  title: Movies - Radarr
+  require_admin: true
+  mode: storage
+  url_path: rad-arr
+- id: baz_arr
+  show_in_sidebar: true
+  icon: mdi:subtitles
+  title: Subtitles - Bazarr
+  require_admin: true
+  mode: storage
+  url_path: baz-arr
+- id: pl_ex
+  show_in_sidebar: true
+  icon: mdi:multimedia
+  title: Plex
+  require_admin: true
+  mode: storage
+  url_path: pl-ex

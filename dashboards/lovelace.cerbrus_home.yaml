@@ -1,0 +1,1028 @@
+config:
+  views:
+  - title: Home
+    path: home
+    icon: mdi:home
+    type: sections
+    max_columns: 3
+    header:
+      layout: responsive
+      badges_position: top
+      badges_wrap: scroll
+    badges:
+    - type: entity
+      entity: person.cerbrus
+      show_entity_picture: true
+    - type: entity
+      entity: weather.forecast_home
+      show_name: false
+      state_content:
+      - state
+      - temperature
+    - type: entity
+      entity: sensor.dsmr_reading_electricity_currently_delivered
+      name: Usage
+      show_name: true
+      color: orange
+    - type: entity
+      entity: sensor.solis_inverter_1002020226290079_solis_ac_output_total_power
+      name: Solar
+      show_name: true
+      color: amber
+    - type: entity
+      entity: sensor.organic_waste_pickup_date
+      name: Organic bin
+      show_name: true
+      icon: mdi:leaf
+      color: green
+      visibility:
+      - condition: template
+        value_template: '{{ states(''sensor.twente_milieu_organic_waste_pickup'') in [now().date() | string, (now().date()
+          + timedelta(days=1)) | string] }}'
+    - type: entity
+      entity: sensor.packages_waste_pickup_date
+      name: Packages bin
+      show_name: true
+      icon: mdi:recycle
+      color: orange
+      visibility:
+      - condition: template
+        value_template: '{{ states(''sensor.twente_milieu_packages_waste_pickup'') in [now().date() | string, (now().date()
+          + timedelta(days=1)) | string] }}'
+    - type: entity
+      entity: sensor.non_recyclable_waste_pickup_date
+      name: Residual bin
+      show_name: true
+      icon: mdi:trash-can
+      color: grey
+      visibility:
+      - condition: template
+        value_template: '{{ states(''sensor.twente_milieu_non_recyclable_waste_pickup'') in [now().date() | string, (now().date()
+          + timedelta(days=1)) | string] }}'
+    sections:
+    - type: grid
+      cards:
+      - type: heading
+        heading: Lights
+        icon: mdi:lightbulb-group
+      - type: tile
+        entity: switch.lights_office
+        name: Office
+        icon: mdi:desk
+        color: amber
+        tap_action:
+          action: toggle
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: light.lamp
+        name: Bedroom
+        icon: mdi:bed
+        tap_action:
+          action: toggle
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: switch.front_door_light
+        name: Entrance
+        icon: mdi:coach-lamp
+        color: amber
+        tap_action:
+          action: toggle
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: switch.bathroom_fan
+        name: Bathroom fan
+        icon: mdi:fan
+        color: blue
+        tap_action:
+          action: perform-action
+          perform_action: script.turn_on
+          target:
+            entity_id: script.toggle_bathroom_fan
+        icon_tap_action:
+          action: perform-action
+          perform_action: script.turn_on
+          target:
+            entity_id: script.toggle_bathroom_fan
+        grid_options:
+          columns: 6
+      - type: heading
+        heading: Other
+        icon: mdi:dots-horizontal
+      - type: tile
+        entity: switch.power_socket_freezer
+        name: Freezer socket
+        icon: mdi:fridge-industrial
+        tap_action:
+          action: more-info
+        icon_tap_action:
+          action: toggle
+          confirmation:
+            text: Toggle the freezer socket?
+        grid_options:
+          columns: 6
+      - type: heading
+        heading: Shutters
+        icon: mdi:window-shutter
+      - type: tile
+        entity: cover.shutter_front
+        name: Front
+        features:
+        - type: cover-open-close
+        - type: cover-position
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: cover.shutter_back
+        name: Back
+        features:
+        - type: cover-open-close
+        - type: cover-position
+        grid_options:
+          columns: 6
+      - type: heading
+        heading: Media
+        icon: mdi:television
+      - type: media-control
+        entity: media_player.living_room_tv
+        visibility:
+        - condition: state
+          entity: media_player.living_room_tv
+          state_not: 'off'
+        - condition: state
+          entity: media_player.living_room_tv
+          state_not: unavailable
+        grid_options:
+          columns: full
+      - type: tile
+        entity: media_player.living_room_tv_remote
+        name: TV
+        features:
+        - type: media-player-volume-buttons
+        grid_options:
+          columns: 12
+    - type: grid
+      cards:
+      - type: heading
+        heading: Climate
+        icon: mdi:thermostat
+        tap_action:
+          action: navigate
+          navigation_path: /cerbrus-home/heating
+        badges:
+        - type: entity
+          entity: sensor.heating_zone_outdoor_temperature
+          icon: mdi:home-thermometer-outline
+        - type: entity
+          entity: sensor.heating_zone_indoor_humidity
+      - type: thermostat
+        entity: climate.heating_zone
+        name: Thermostat
+        show_current_as_primary: true
+        features:
+        - type: climate-hvac-modes
+          hvac_modes:
+          - auto
+          - heat
+          - 'off'
+        grid_options:
+          columns: full
+      - type: heading
+        heading: Weather
+        icon: mdi:weather-partly-cloudy
+        tap_action:
+          action: navigate
+          navigation_path: /cerbrus-home/weather
+      - type: weather-forecast
+        entity: weather.forecast_home
+        forecast_type: daily
+        show_current: true
+        show_forecast: true
+        grid_options:
+          columns: full
+    - type: grid
+      cards:
+      - type: heading
+        heading: Waste pickup
+        icon: mdi:trash-can-outline
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: sensor.organic_waste_pickup_progress
+        name: Organic Waste
+        show_state: true
+        show_attribute: false
+        scrolling_effect: true
+        sub_button:
+          main:
+          - entity: sensor.organic_waste_pickup_date
+            show_state: true
+            width: 160
+            content_layout: icon-right
+          bottom: []
+        styles: ".bubble-range-fill {\n  background: #4caf50 !important;\n  opacity: 0.7;\n}\n.bubble-sub-button-1 { pointer-events:\
+          \ none; }\n.bubble-button { cursor: pointer; }\nha-card {\n  --bubble-border-radius: 12px;\n}\n.bubble-container\
+          \ {\n  border: var(--ha-card-border-width, 1px) solid var(--ha-card-border-color, var(--divider-color)) !important;\n\
+          \  box-sizing: border-box;\n}\n"
+        grid_options:
+          columns: full
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: sensor.packages_waste_pickup_progress
+        name: Packages
+        show_state: true
+        show_attribute: false
+        scrolling_effect: true
+        sub_button:
+          main:
+          - entity: sensor.packages_waste_pickup_date
+            show_state: true
+            width: 160
+            content_layout: icon-right
+          bottom: []
+        styles: ".bubble-range-fill {\n  background: #ff9800 !important;\n  opacity: 0.7;\n}\n.bubble-sub-button-1 { pointer-events:\
+          \ none; }\n.bubble-button { cursor: pointer; }\nha-card {\n  --bubble-border-radius: 12px;\n}\n.bubble-container\
+          \ {\n  border: var(--ha-card-border-width, 1px) solid var(--ha-card-border-color, var(--divider-color)) !important;\n\
+          \  box-sizing: border-box;\n}\n"
+        grid_options:
+          columns: full
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: sensor.non_recyclable_waste_pickup_progress
+        name: Non-Recyclable Waste
+        show_state: true
+        show_attribute: false
+        scrolling_effect: true
+        sub_button:
+          main:
+          - entity: sensor.non_recyclable_waste_pickup_date
+            show_state: true
+            width: 160
+            content_layout: icon-right
+          bottom: []
+        styles: ".bubble-range-fill {\n  background: #000 !important;\n  opacity: 0.7;\n}\n.bubble-sub-button-1 { pointer-events:\
+          \ none; }\n.bubble-button { cursor: pointer; }\nha-card {\n  --bubble-border-radius: 12px;\n}\n.bubble-container\
+          \ {\n  border: var(--ha-card-border-width, 1px) solid var(--ha-card-border-color, var(--divider-color)) !important;\n\
+          \  box-sizing: border-box;\n}\n"
+        grid_options:
+          columns: full
+      - type: heading
+        heading: Calendar
+        icon: mdi:calendar
+      - type: calendar
+        initial_view: listWeek
+        entities:
+        - calendar.redacted_1
+        - calendar.redacted_2
+        - calendar.redacted_3
+        - calendar.redacted_4
+        - calendar.redacted_5
+        grid_options:
+          columns: full
+    show_icon_and_title: true
+  - title: Energy
+    path: energy
+    icon: mdi:lightning-bolt
+    type: sections
+    max_columns: 3
+    sections:
+    - type: grid
+      cards:
+      - type: heading
+        heading: Now
+        icon: mdi:flash
+      - type: custom:power-flow-card-plus
+        entities:
+          grid:
+            entity:
+              consumption: sensor.dsmr_reading_electricity_currently_delivered
+              production: sensor.dsmr_reading_electricity_currently_returned
+            color_icon: color_dynamically
+            color_circle: color_dynamically
+          solar:
+            entity: sensor.solis_inverter_1002020226290079_solis_ac_output_total_power
+            display_zero_state: true
+            color_icon: true
+          individual:
+          - entity: sensor.dsmr_consumption_gas_currently_delivered
+            name: Gas
+            icon: mdi:gas-burner
+            color: '#fc565a'
+            display_zero: true
+            unit_of_measurement: m³
+            decimals: 3
+            calculate_flow_rate: false
+        clickable_entities: true
+        display_zero_lines:
+          mode: show
+          transparency: 50
+          grey_color:
+          - 189
+          - 189
+          - 189
+        use_new_flow_rate_model: true
+        w_decimals: 0
+        kw_decimals: 1
+        min_flow_rate: 0.75
+        max_flow_rate: 6
+        max_expected_power: 2000
+        min_expected_power: 0.01
+        watt_threshold: 1000
+        grid_options:
+          columns: full
+      - type: tile
+        entity: sensor.dsmr_reading_electricity_currently_delivered
+        name: Grid usage
+        icon: mdi:transmission-tower-import
+        color: orange
+        features:
+        - type: trend-graph
+          hours_to_show: 24
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_reading_electricity_currently_returned
+        name: Grid return
+        icon: mdi:transmission-tower-export
+        color: green
+        features:
+        - type: trend-graph
+          hours_to_show: 24
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.solis_inverter_1002020226290079_solis_ac_output_total_power
+        name: Solar output
+        icon: mdi:solar-power
+        color: amber
+        features:
+        - type: trend-graph
+          hours_to_show: 24
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_meter_stats_electricity_tariff
+        name: Tariff
+        icon: mdi:cash-clock
+        grid_options:
+          columns: 6
+    - type: grid
+      cards:
+      - type: heading
+        heading: Today
+        icon: mdi:calendar-today
+      - type: tile
+        entity: sensor.dsmr_day_consumption_electricity_merged
+        name: Electricity used
+        icon: mdi:home-lightning-bolt
+        color: orange
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_day_consumption_electricity_returned_merged
+        name: Electricity returned
+        icon: mdi:transmission-tower-export
+        color: green
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_day_consumption_gas
+        name: Gas used
+        icon: mdi:fire
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.solis_inverter_1002020226290079_solis_energy_today
+        name: Solar produced
+        icon: mdi:solar-power
+        color: amber
+        grid_options:
+          columns: 6
+      - type: heading
+        heading: Solar forecast
+        heading_style: subtitle
+        icon: mdi:weather-sunny
+      - type: tile
+        entity: sensor.energy_production_today
+        name: Today
+        color: amber
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energy_production_today_remaining
+        name: Remaining
+        color: amber
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energy_production_tomorrow
+        name: Tomorrow
+        color: amber
+        grid_options:
+          columns: 12
+      - type: heading
+        heading: This month
+        heading_style: subtitle
+        icon: mdi:calendar-month
+      - type: tile
+        entity: sensor.dsmr_current_month_electricity_merged
+        name: Used
+        icon: mdi:home-lightning-bolt
+        color: orange
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_current_month_electricity_returned_merged
+        name: Returned
+        icon: mdi:transmission-tower-export
+        color: green
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_current_month_gas
+        name: Gas
+        icon: mdi:fire
+        color: red
+        grid_options:
+          columns: 12
+      - type: heading
+        heading: This year
+        heading_style: subtitle
+        icon: mdi:calendar
+      - type: tile
+        entity: sensor.dsmr_current_year_electricity_merged
+        name: Used
+        icon: mdi:home-lightning-bolt
+        color: orange
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_current_year_electricity_returned_merged
+        name: Returned
+        icon: mdi:transmission-tower-export
+        color: green
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_current_year_gas
+        name: Gas
+        icon: mdi:fire
+        color: red
+        grid_options:
+          columns: 12
+    - type: grid
+      cards:
+      - type: heading
+        heading: Last 24 hours
+        icon: mdi:chart-line
+      - type: history-graph
+        hours_to_show: 24
+        entities:
+        - entity: sensor.dsmr_reading_electricity_currently_delivered
+          name: Grid usage
+          color: orange
+        - entity: sensor.dsmr_reading_electricity_currently_returned
+          name: Grid return
+          color: green
+        grid_options:
+          columns: full
+      - type: history-graph
+        hours_to_show: 24
+        entities:
+        - entity: sensor.solis_inverter_1002020226290079_solis_ac_output_total_power
+          name: Solar output
+          color: amber
+        - entity: sensor.power_production_now
+          name: Solar forecast
+          color: grey
+        grid_options:
+          columns: full
+      - type: heading
+        heading: Phases
+        heading_style: subtitle
+        icon: mdi:sine-wave
+      - type: tile
+        entity: sensor.dsmr_reading_phase_currently_delivered_l1
+        name: L1
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_reading_phase_currently_delivered_l2
+        name: L2
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_reading_phase_currently_delivered_l3
+        name: L3
+        grid_options:
+          columns: 12
+    show_icon_and_title: true
+  - title: Heating
+    path: heating
+    icon: mdi:home-thermometer
+    type: sections
+    max_columns: 3
+    sections:
+    - type: grid
+      cards:
+      - type: heading
+        heading: Thermostat
+        icon: mdi:thermostat
+      - type: thermostat
+        entity: climate.heating_zone
+        name: Thermostat
+        show_current_as_primary: true
+        features:
+        - type: climate-hvac-modes
+          hvac_modes:
+          - auto
+          - heat
+          - 'off'
+        - type: climate-preset-modes
+          style: dropdown
+        grid_options:
+          columns: full
+      - type: tile
+        entity: sensor.heating_zone_outdoor_temperature
+        name: Outdoor
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.heating_zone_indoor_humidity
+        name: Humidity
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: select.heating_zone_assigned_program
+        name: Program
+        icon: mdi:calendar-clock
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: select.heating_zone_zone_mode
+        name: Zone mode
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: switch.heating_installation_settings_away_mode
+        name: Away mode
+        icon: mdi:home-export-outline
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: switch.heating_installation_settings_boost_general_control
+        name: Boost
+        icon: mdi:rocket-launch
+        color: red
+        grid_options:
+          columns: 6
+      - type: history-graph
+        hours_to_show: 48
+        entities:
+        - entity: climate.heating_zone
+          name: Thermostat
+        grid_options:
+          columns: full
+    - type: grid
+      cards:
+      - type: heading
+        heading: Boiler
+        icon: mdi:water-boiler
+      - type: tile
+        entity: sensor.boiler_boiler_status
+        name: Status
+        icon: mdi:information-outline
+        grid_options:
+          columns: 12
+      - type: tile
+        entity: binary_sensor.boiler_flame
+        name: Flame
+        icon: mdi:fire
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.boiler_current_modulation_power
+        name: Modulation
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.boiler_supply_temperature
+        name: Supply
+        features:
+        - type: trend-graph
+          hours_to_show: 24
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.boiler_system_pressure
+        name: Pressure
+        features:
+        - type: trend-graph
+          hours_to_show: 168
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.heating_installation_settings_supply_temperature_setpoint
+        name: Supply setpoint
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.heating_zone_valve_position
+        name: Valve
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: binary_sensor.boiler_refill_needed
+        name: Refill needed
+        icon: mdi:water-alert
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.boiler_maintenance_request
+        name: Maintenance
+        icon: mdi:wrench
+        grid_options:
+          columns: 6
+    - type: grid
+      cards:
+      - type: heading
+        heading: Hot water
+        icon: mdi:water-thermometer
+      - type: tile
+        entity: water_heater.hot_water_tank
+        name: Hot water
+        grid_options:
+          columns: 12
+      - type: tile
+        entity: switch.hot_water_tank_thermal_disinfect
+        name: Thermal disinfect
+        icon: mdi:bacteria-outline
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: binary_sensor.boiler_hot_water_burner
+        name: Hot water burner
+        icon: mdi:fire
+        grid_options:
+          columns: 6
+      - type: heading
+        heading: Gas use
+        icon: mdi:fire
+      - type: tile
+        entity: sensor.energy_performance_gas_heating_today
+        name: Heating today
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energy_performance_gas_hot_water_today
+        name: Hot water today
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.dsmr_day_consumption_gas
+        name: Meter today
+        icon: mdi:meter-gas
+        color: red
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.energy_performance_energy_efficiency
+        name: Efficiency
+        grid_options:
+          columns: 6
+    show_icon_and_title: true
+  - title: Weather
+    path: weather
+    icon: mdi:weather-partly-cloudy
+    type: sections
+    max_columns: 2
+    sections:
+    - type: grid
+      cards:
+      - type: heading
+        heading: Forecast
+        icon: mdi:weather-partly-cloudy
+      - type: weather-forecast
+        entity: weather.forecast_home
+        forecast_type: hourly
+        show_current: true
+        show_forecast: true
+        grid_options:
+          columns: full
+      - type: weather-forecast
+        entity: weather.forecast_home
+        forecast_type: daily
+        show_current: false
+        show_forecast: true
+        grid_options:
+          columns: full
+      - type: tile
+        entity: sun.sun
+        name: Sun
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.sun_next_rising
+        name: Sunrise
+        icon: mdi:weather-sunset-up
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.sun_next_setting
+        name: Sunset
+        icon: mdi:weather-sunset-down
+        grid_options:
+          columns: 12
+    - type: grid
+      cards:
+      - type: heading
+        heading: Rain radar
+        icon: mdi:radar
+      - type: custom:weather-radar-card
+        zoom_level: 7
+        center_latitude: REDACTED
+        center_longitude: REDACTED
+        marker_latitude: REDACTED
+        marker_longitude: REDACTED
+        static_map: false
+        show_zoom: true
+        square_map: false
+        show_marker: true
+        show_playback: true
+        show_recenter: true
+        show_scale: true
+        show_range: false
+        extra_labels: false
+        grid_options:
+          columns: full
+    show_icon_and_title: true
+  - title: System
+    path: system
+    icon: mdi:server-network
+    type: sections
+    badges:
+    - type: entity
+      entity: sensor.home_assistant_version_current_version
+      name: Core
+      show_name: true
+      icon: mdi:home-assistant
+    - type: entity
+      entity: sensor.home_assistant_operating_system_version
+      name: OS
+      show_name: true
+    - type: entity
+      entity: sensor.system_monitor_last_boot
+      name: Uptime
+      show_name: true
+    - type: entity
+      entity: sensor.system_monitor_ipv4_address_end0
+      name: LAN
+      show_name: true
+    - type: entity
+      entity: sensor.cli_external_ip_address
+      name: WAN
+      show_name: true
+    - type: custom:mushroom-template-badge
+      label: Updates pending
+      content: '{{ states.update | selectattr(''state'', ''eq'', ''on'') | list | count }}'
+      icon: mdi:update
+      color: '{{ ''orange'' if states.update | selectattr(''state'', ''eq'', ''on'') | list | count else ''green'' }}'
+      tap_action:
+        action: navigate
+        navigation_path: /config/updates
+    sections:
+    - type: grid
+      cards:
+      - type: heading
+        heading: Pi-hole
+        icon: mdi:pi-hole
+      - type: custom:pi-hole
+        device_id: 1a974a6849eca19d46e0e4bb147990de
+        chart:
+          line_type: gradient_no_fill
+        features: []
+        collapsed_sections:
+        - switches
+        - pause
+        exclude_sections:
+        - actions
+        grid_options:
+          columns: full
+          rows: auto
+    - type: grid
+      cards:
+      - type: heading
+        heading: Raspberry Pi
+        icon: mdi:raspberry-pi
+      - type: tile
+        entity: sensor.system_monitor_processor_use
+        name: CPU
+        icon: mdi:cpu-64-bit
+        color: blue
+        features:
+        - type: trend-graph
+          hours_to_show: 6
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.system_monitor_processor_temperature
+        name: CPU temp
+        color: orange
+        features:
+        - type: trend-graph
+          hours_to_show: 6
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.system_monitor_memory_usage
+        name: Memory
+        icon: mdi:memory
+        color: purple
+        features:
+        - type: trend-graph
+          hours_to_show: 6
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.system_monitor_disk_usage
+        name: Disk
+        icon: mdi:harddisk
+        color: teal
+        features:
+        - type: bar-gauge
+          min: 0
+          max: 100
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.system_monitor_load_5_min
+        name: Load (5m)
+        icon: mdi:gauge
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.system_monitor_disk_free
+        name: Disk free
+        icon: mdi:harddisk
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: switch.rpi_cooling_fan
+        name: Cooling fan
+        icon: mdi:fan
+        color: blue
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: binary_sensor.rpi_power_status
+        name: Power supply
+        grid_options:
+          columns: 6
+    - type: grid
+      cards:
+      - type: heading
+        heading: Network
+        icon: mdi:lan
+      - type: history-graph
+        hours_to_show: 1
+        entities:
+        - entity: sensor.system_monitor_network_throughput_in_end0
+          name: Download
+          color: green
+        - entity: sensor.system_monitor_network_throughput_out_end0
+          name: Upload
+          color: red
+        grid_options:
+          columns: full
+      - type: heading
+        heading: Config repository
+        icon: mdi:git
+      - type: tile
+        entity: sensor.cerbrus_homeassistant_latest_commit
+        name: Latest commit
+        icon: mdi:source-commit
+        state_content:
+        - state
+        - last_changed
+        grid_options:
+          columns: 12
+      - type: tile
+        entity: switch.git_pull
+        name: Git pull
+        icon: mdi:source-pull
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: binary_sensor.git_pull_running
+        name: Pull running
+        grid_options:
+          columns: 6
+    - type: grid
+      cards:
+      - type: heading
+        heading: Backups
+        icon: mdi:backup-restore
+      - type: tile
+        entity: sensor.backup_last_successful_automatic_backup
+        name: Last backup
+        icon: mdi:check-circle-outline
+        color: green
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.backup_next_scheduled_automatic_backup
+        name: Next backup
+        icon: mdi:clock-outline
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.backup_last_successful_automatic_backup_size
+        name: Size
+        icon: mdi:database
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: binary_sensor.backups_stale
+        name: Stale
+        icon: mdi:alert-circle-outline
+        color: red
+        grid_options:
+          columns: 6
+      - type: heading
+        heading: Printers
+        icon: mdi:printer
+      - type: tile
+        entity: sensor.canon_ts5100_series
+        name: Canon TS5100
+        icon: mdi:printer
+        grid_options:
+          columns: 12
+      - type: gauge
+        entity: sensor.canon_ts5100_series_black
+        name: Black ink
+        needle: true
+        severity:
+          green: 30
+          yellow: 15
+          red: 0
+        visibility:
+        - condition: state
+          entity: sensor.canon_ts5100_series_black
+          state_not: unknown
+        - condition: state
+          entity: sensor.canon_ts5100_series_black
+          state_not: unavailable
+        grid_options:
+          columns: 6
+      - type: gauge
+        entity: sensor.canon_ts5100_series_color
+        name: Color ink
+        needle: true
+        severity:
+          green: 30
+          yellow: 15
+          red: 0
+        visibility:
+        - condition: state
+          entity: sensor.canon_ts5100_series_color
+          state_not: unknown
+        - condition: state
+          entity: sensor.canon_ts5100_series_color
+          state_not: unavailable
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.octoprint_current_state
+        name: Ender 3
+        icon: mdi:printer-3d
+        grid_options:
+          columns: 6
+        visibility:
+        - condition: state
+          entity: sensor.octoprint_current_state
+          state_not: unavailable
+      - type: tile
+        entity: sensor.octoprint_job_percentage
+        name: Print progress
+        features:
+        - type: bar-gauge
+          min: 0
+          max: 100
+        grid_options:
+          columns: 6
+        visibility:
+        - condition: state
+          entity: sensor.octoprint_current_state
+          state_not: unavailable
+    show_icon_and_title: true
+    max_columns: 4
+    cards: []

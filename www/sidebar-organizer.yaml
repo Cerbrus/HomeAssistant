@@ -6,10 +6,11 @@ move_settings_from_fixed: false
 force_transparent_background: false
 accordion_mode: true
 text_transformation: none
+hidden_items:
+  - todo
 custom_groups:
   Daily:
     - calendar
-    - todo
   Media:
     - pl-ex
     - db21ed7f_seerr
