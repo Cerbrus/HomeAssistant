@@ -9,7 +9,8 @@ All automations are created in the UI and stored in `automations.yaml`.
 | HA Boot - Notify Discord | Home Assistant start | | Runs `script.ha_online_notify_discord` |
 | Toggle Bedroom Light | iOS / watch action "Bedroom Light" | | Toggles `light.lamp` |
 | Shutters - Automate close | Phone leaves zone Goor; 30 minutes after sunset; midnight | | Sets each shutter to position 10 when it is above 10 |
-| Shutters - Automate open | Phone enters zone Home; 30 minutes after sunrise; every 10 minutes between 08:00 and 10:00 | Buienradar temperature between 5 and 25 °C, phone is home, before sunset, after 03:00 | Sets each shutter to position 75 when it is below 40 |
+| Shutters - Automate open | Phone enters zone Home; 30 minutes after sunrise; 08:00; Buienradar temperature rises above 5 °C | Buienradar temperature between 5 and 25 °C, phone is home, before sunset, after 03:00; the temperature trigger only counts from 08:00 | Sets each shutter to position 75 when it is below 40 |
+| Shutters - Automate open (backup) | Disabled. Copy of the previous version: every 10 minutes between 08:00 and 10:00 instead of the 08:00 and temperature triggers | As above, without the 08:00 rule | As above |
 | Light - Turn on front door light at sunset | Sunset | | Turns the front entrance switch on |
 | Light - Turn off front door light at sunrise | Sunrise | | Turns the front entrance switch off |
 
@@ -17,7 +18,8 @@ Notes:
 
 - Shutter position 10 counts as closed, 75 as open. The "above 10" and "below 40" checks skip a shutter that is already in place.
 - The temperature condition keeps the shutters shut on hot days (sun shading) and on cold days (insulation).
-- The repeated morning triggers retry the opening until the conditions hold. Candidate for a cleaner design, see [open items](open-items.md).
+- The temperature trigger opens the shutters later in the day once it gets warmer than 5 °C. Before 08:00 it is ignored, so a warm night does not open them; the 08:00 trigger picks that case up.
+- The backup automation is kept disabled until the new triggers have proven themselves, see [open items](open-items.md).
 
 ## Scripts
 
