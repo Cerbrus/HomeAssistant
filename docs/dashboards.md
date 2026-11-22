@@ -13,6 +13,7 @@ Dashboards are edited in the UI (storage mode). A redacted clone of their config
 | Home | `cerbrus-home` | Everyone | Main dashboard with the views Home, Energy, Heating, Weather, Media and System |
 | Map | `map` | Everyone, hidden from the sidebar | Built-in map |
 | Plex | `pl-ex` | Admin | Iframe |
+| Suggestions - SuggestArr | `suggest-arr` | Admin | Iframe |
 | Movies - Radarr | `rad-arr` | Admin | Iframe |
 | TV - Sonarr | `son-arr` | Admin | Iframe |
 | Subtitles - Bazarr | `baz-arr` | Admin | Iframe |
@@ -38,7 +39,7 @@ The sidebar is the main navigation ([ADR-0006](adr/0006-sidebar-as-main-navigati
 | Group | Entries | Collapsed by default |
 | --- | --- | --- |
 | Daily | Calendar | No |
-| Media | Plex, Seerr, Radarr, Sonarr, Bazarr, Prowlarr, Transmission, Media browser | Yes |
+| Media | Plex, Seerr, SuggestArr, Radarr, Sonarr, Bazarr, Prowlarr, Transmission, Media browser | Yes |
 | Energy | Energy dashboard, DSMR Reader | Yes |
 | Apps & Devices | Integrations, Devices, Entities, Helpers, Apps, Marketplace | Yes |
 | Tools | Studio Code Server, Terminal, pgAdmin, Nginx Proxy Manager, Tailscale, Google Drive Backup | Yes |

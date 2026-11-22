@@ -12,7 +12,7 @@
 | Machine | Role |
 | --- | --- |
 | Pi-hole (dedicated device) | DNS for the LAN, split-horizon answers for `cerbrus.nl` |
-| Server Pi | Hobby web apps, proxied through the same Nginx Proxy Manager |
+| Server Pi | Hobby web apps and SuggestArr ([ADR-0026](adr/0026-suggestarr-on-the-server-pi.md)), proxied through the same Nginx Proxy Manager |
 | 3D printer host | OctoPrint, often powered off |
 
 ## Network path
@@ -45,6 +45,7 @@ flowchart LR
 | `subtitles`, `bazarr` | Bazarr |
 | `indexers`, `prowlarr` | Prowlarr |
 | `requests`, `seerr` | Seerr |
+| `suggestions`, `suggestarr` | SuggestArr on the server Pi |
 | `recipes`, `shopping`, `pokemon` | Apps on the server Pi |
 | `proxy`, `pihole` | Admin UIs, LAN only |
 | `404` | Custom 404 page |

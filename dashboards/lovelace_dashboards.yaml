@@ -55,3 +55,10 @@ items:
   require_admin: true
   mode: storage
   url_path: pl-ex
+- id: suggest_arr
+  url_path: suggest-arr
+  title: Suggestions - SuggestArr
+  icon: mdi:lightbulb-on-outline
+  require_admin: true
+  show_in_sidebar: true
+  mode: storage

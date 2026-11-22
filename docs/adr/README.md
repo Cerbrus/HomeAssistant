@@ -31,6 +31,7 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0023](0023-commit-ui-edits-on-the-pi.md) | 2026-11-21 | Commit UI edits on the Pi and push them with a deploy key | Recorded |
 | [0024](0024-energy-cost-energyzero-plus-markup.md) | 2026-11-21 | Price energy with EnergyZero market prices plus an own markup | Recorded |
 | [0025](0025-arr-guard-script-over-cleanuparr.md) | 2026-11-22 | Remove fake downloads with an own script instead of Cleanuparr | Recorded |
+| [0026](0026-suggestarr-on-the-server-pi.md) | 2026-11-22 | Run SuggestArr as a container on the server Pi | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 

@@ -1192,3 +1192,5 @@ config:
     show_icon_and_title: true
     max_columns: 4
     cards: []
+    header:
+      layout: start

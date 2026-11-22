@@ -58,6 +58,14 @@ The theme only applies through the proxy host; the direct admin port shows the s
 | Transmission | Download client | Running |
 | Seerr | Media requests | Running |
 
+### Suggestions
+
+SuggestArr is the one part of the media stack that is not a Home Assistant app: it runs as a Docker Compose project on the server Pi ([ADR-0026](adr/0026-suggestarr-on-the-server-pi.md)). It reads the Plex watch history, finds similar titles on TMDB and requests them in Seerr, from where they follow the normal route through Radarr and Sonarr.
+
+- The compose file pins the image tag and sets a memory limit. To update: change the tag, then `docker compose pull` and `docker compose up -d` in its directory.
+- Its configuration, database and log are in `config_files/` next to the compose file. Home Assistant's backups do not cover them.
+- It has its own login. Jobs, filters and users are set in its interface, at `suggestions.cerbrus.nl` or through the sidebar ([dashboards.md](dashboards.md)).
+
 ### Movie size and quality
 
 Radarr rejects every release above 20 GB (Settings > Indexers > Options > Maximum Size). The `Ultra-HD` profile also allows 1080p (HDTV, WEB, Bluray), so a movie without a 4K release under the limit still gets a 1080p one and upgrades when a smaller 4K release appears. Sonarr has no size limit: season packs are larger than that.

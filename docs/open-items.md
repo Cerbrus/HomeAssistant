@@ -13,6 +13,7 @@ Loose ends that are known and not yet handled. Remove an item when it is handled
 ## Media
 
 - **Disk space sensors** of Radarr and Transmission read 0. Find out why before putting them on the Media view.
+- **SuggestArr** has no backup of its configuration yet ([ADR-0026](adr/0026-suggestarr-on-the-server-pi.md)).
 
 ## Network
 
