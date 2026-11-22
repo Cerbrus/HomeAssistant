@@ -459,3 +459,65 @@
           entity_id: switch.heating_installation_settings_away_mode
   mode: queued
   max: 2
+- id: '1795363885447'
+  alias: Herinnering energieleverancier 5 januari 2027
+  description: Eenmalige herinnering op 2027-01-04 en 2027-01-05 om de overstap van
+    energieleverancier opnieuw te bekijken (Vandebron naar Budget Thuis dynamisch,
+    niet voor 2027-02-06). Mag daarna weg.
+  triggers:
+  - trigger: time
+    at: 09:00:00
+  conditions:
+  - condition: template
+    value_template: '{{ now().strftime(''%Y-%m-%d'') in [''2027-01-04'', ''2027-01-05'']
+      }}'
+  actions:
+  - action: notify.send_message
+    target:
+      entity_id: notify.iphone_michiel
+    data:
+      title: Energieleverancier opnieuw bekijken
+      message: Overstap Vandebron naar Budget Thuis dynamisch opnieuw vergelijken.
+        Niet overstappen voor 6 februari 2027 (cashback Vandebron). Vraag Claude Code
+        naar het energie-onderzoek.
+  mode: single
+- id: '1795367655554'
+  alias: Media - Remove fake downloads
+  description: 'Runs scripts/arr_guard.py every minute: removes torrents that contain
+    an executable from Transmission through the Sonarr and Radarr queue, with blocklisting.'
+  triggers:
+  - trigger: time_pattern
+    minutes: /1
+  conditions: []
+  actions:
+  - action: shell_command.arr_guard
+    response_variable: result
+  - if:
+    - condition: template
+      value_template: '{{ result.stdout | default('''') | trim != '''' }}'
+    then:
+    - action: logbook.log
+      data:
+        name: Media guard
+        message: '{{ result.stdout }}'
+  mode: single
+- id: '1795367656009'
+  alias: Media - Protect indexers
+  description: 'Runs scripts/arr_guard.py --indexers once a day: sets Fail Downloads
+    on every Sonarr and Radarr indexer that lacks it.'
+  triggers:
+  - trigger: time
+    at: 04:30:00
+  conditions: []
+  actions:
+  - action: shell_command.arr_guard_indexers
+    response_variable: result
+  - if:
+    - condition: template
+      value_template: '{{ result.stdout | default('''') | trim != '''' }}'
+    then:
+    - action: logbook.log
+      data:
+        name: Media guard
+        message: '{{ result.stdout }}'
+  mode: single
