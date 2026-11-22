@@ -25,7 +25,7 @@
 | `_yaml/light.yaml` | KlikAanKlikUit lights through the ICS-2000 hub |
 | `_yaml/panel_custom.yaml` | Sidebar shortcuts into settings pages |
 | `_yaml/scenes.yaml` | Empty |
-| `_yaml/shell_command.yaml` | The two modes of `scripts/arr_guard.py` |
+| `_yaml/shell_command.yaml` | The three modes of `scripts/arr_guard.py` |
 | `_yaml/switch.yaml` | GPIO switch for the Pi's cooling fan |
 | `_yaml/templates.yaml` | Waste pickup date sensors |
 

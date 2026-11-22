@@ -74,11 +74,15 @@ Radarr rejects every release above 20 GB (Settings > Indexers > Options > Maximu
 
 Public indexers regularly serve torrents whose content is a Windows executable named after an episode or movie. Every indexer in Radarr and Sonarr therefore has **Fail Downloads** set to `Executables` and `Potentially Dangerous`: such a download is marked as failed, blocklisted and searched again instead of waiting in the queue.
 
+Indexer priority keeps most of them out: The Pirate Bay and Knaben have priority 10, LimeTorrents and TorrentDownload 40, the rest the default 25. Among releases of the same quality the lower number wins before the seeder count is looked at, and the fakes came from the two at 40 with inflated seeder counts. The priority is set in Prowlarr, which syncs it to Radarr and Sonarr.
+
 The option is an advanced setting on the indexer itself (Settings > Indexers, with Show Advanced on). Prowlarr does not manage it and keeps it on a sync. It has no default, and it only acts once the fake has been downloaded completely.
 
-`scripts/arr_guard.py` covers both gaps ([ADR-0025](adr/0025-arr-guard-script-over-cleanuparr.md)). Home Assistant runs it through two automations, see [automations.md](automations.md):
+`scripts/arr_guard.py` covers both gaps ([ADR-0025](adr/0025-arr-guard-script-over-cleanuparr.md)). Home Assistant runs it through three automations, see [automations.md](automations.md):
 
 - Every minute it reads the file lists from Transmission. A torrent holding an executable (`.exe`, `.scr`, `.msi`, `.bat`, `.cmd`, `.pif`, `.lnk`, `.vbs`, `.ps1`, `.zipx`, `.arj`) is removed through the Sonarr or Radarr queue with blocklisting, usually within a minute of being added. Torrents that are not in either queue are left alone.
 - Once a day it sets Fail Downloads on every indexer that lacks it, so an indexer that Prowlarr adds later is covered.
+
+- Once a week it starts a search for all missing monitored movies and episodes. Radarr and Sonarr only search when something is added; after that they watch the newest uploads, so a release that appears later is easily missed. Public indexers can answer part of a large search with rate-limit errors; what is skipped is searched again the week after.
 
 The script takes the addresses and API keys from the Sonarr, Radarr and Transmission integrations in Home Assistant. `--dry-run` reports without changing anything.

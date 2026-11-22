@@ -11,6 +11,7 @@ BLOCKED_EXTENSIONS = (
     ".lnk", ".vbs", ".ps1", ".zipx", ".arj",
 )
 FAIL_DOWNLOADS = [0, 1]
+MISSING_SEARCH = {"sonarr": "MissingEpisodeSearch", "radarr": "MissingMoviesSearch"}
 SESSION_HEADER ="X-Transmission-Session-Id"
 TIMEOUT = 15
 
@@ -126,14 +127,34 @@ def remove_fakes(dry_run):
     print(f"{verb} {removed} queue item(s) for fake download(s): {names}")
 
 
+def search_missing(dry_run):
+    started = []
+    for domain, command in MISSING_SEARCH.items():
+        for app in entries(domain):
+            if not dry_run:
+                call(
+                    f"{app['url'].rstrip('/')}/api/v3/command",
+                    "POST",
+                    {"X-Api-Key": app["api_key"]},
+                    {"name": command},
+                )
+            started.append(domain.capitalize())
+    verb = "Would start" if dry_run else "Started"
+    print(f"{verb} a search for missing items in: {', '.join(started)}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--indexers", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--indexers", action="store_true")
+    mode.add_argument("--search", action="store_true")
     arguments = parser.parse_args()
 
     if arguments.indexers:
         protect_indexers(arguments.dry_run)
+    elif arguments.search:
+        search_missing(arguments.dry_run)
     else:
         remove_fakes(arguments.dry_run)
 
