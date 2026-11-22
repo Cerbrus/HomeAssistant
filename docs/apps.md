@@ -57,3 +57,20 @@ The theme only applies through the proxy host; the direct admin port shows the s
 | FlareSolverr | Cloudflare challenge solver for indexers | Running |
 | Transmission | Download client | Running |
 | Seerr | Media requests | Running |
+
+### Movie size and quality
+
+Radarr rejects every release above 20 GB (Settings > Indexers > Options > Maximum Size). The `Ultra-HD` profile also allows 1080p (HDTV, WEB, Bluray), so a movie without a 4K release under the limit still gets a 1080p one and upgrades when a smaller 4K release appears. Sonarr has no size limit: season packs are larger than that.
+
+### Fake downloads
+
+Public indexers regularly serve torrents whose content is a Windows executable named after an episode or movie. Every indexer in Radarr and Sonarr therefore has **Fail Downloads** set to `Executables` and `Potentially Dangerous`: such a download is marked as failed, blocklisted and searched again instead of waiting in the queue.
+
+The option is an advanced setting on the indexer itself (Settings > Indexers, with Show Advanced on). Prowlarr does not manage it and keeps it on a sync. It has no default, and it only acts once the fake has been downloaded completely.
+
+`scripts/arr_guard.py` covers both gaps ([ADR-0025](adr/0025-arr-guard-script-over-cleanuparr.md)). Home Assistant runs it through two automations, see [automations.md](automations.md):
+
+- Every minute it reads the file lists from Transmission. A torrent holding an executable (`.exe`, `.scr`, `.msi`, `.bat`, `.cmd`, `.pif`, `.lnk`, `.vbs`, `.ps1`, `.zipx`, `.arj`) is removed through the Sonarr or Radarr queue with blocklisting, usually within a minute of being added. Torrents that are not in either queue are left alone.
+- Once a day it sets Fail Downloads on every indexer that lacks it, so an indexer that Prowlarr adds later is covered.
+
+The script takes the addresses and API keys from the Sonarr, Radarr and Transmission integrations in Home Assistant. `--dry-run` reports without changing anything.

@@ -17,6 +17,8 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Notifications - Freezer socket off or unreachable | Freezer socket off for a minute; unreachable for 15 minutes | | Off: critical alert on the phone. Unreachable: time-sensitive notification |
 | Notifications - Boiler needs attention | Refill needed; system pressure below 1 bar for 10 minutes; a blocking or locking fault code; a maintenance request | | Critical alert on the phone with the sensor and its value; the maintenance request as a normal notification |
 | Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
+| Media - Remove fake downloads | Every minute | | Runs `shell_command.arr_guard`; writes a logbook entry when something was removed |
+| Media - Protect indexers | 04:30 | | Runs `shell_command.arr_guard_indexers`; writes a logbook entry when an indexer was changed |
 | Notifications - Backups stale | The Google Drive Backup app reports stale backups | | Notifies the phone |
 
 Notes:

@@ -12,6 +12,7 @@
 | `www/sidebar-organizer.yaml` | Sidebar grouping, see [dashboards.md](dashboards.md) |
 | `dashboards/` | Redacted clone of the UI-managed dashboards, see [dashboards.md](dashboards.md) |
 | `tools/` | `export_dashboards.py`, which refreshes that clone |
+| `scripts/` | Scripts that Home Assistant runs through `shell_command`, see [apps.md](apps.md#fake-downloads) |
 | `docs/` | This documentation and the ADRs |
 
 ## YAML domains
@@ -24,6 +25,7 @@
 | `_yaml/light.yaml` | KlikAanKlikUit lights through the ICS-2000 hub |
 | `_yaml/panel_custom.yaml` | Sidebar shortcuts into settings pages |
 | `_yaml/scenes.yaml` | Empty |
+| `_yaml/shell_command.yaml` | The two modes of `scripts/arr_guard.py` |
 | `_yaml/switch.yaml` | GPIO switch for the Pi's cooling fan |
 | `_yaml/templates.yaml` | Waste pickup date sensors |
 

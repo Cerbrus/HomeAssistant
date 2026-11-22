@@ -16,5 +16,6 @@ input_number: !include _yaml/input_number.yaml
 light: !include _yaml/light.yaml
 panel_custom: !include _yaml/panel_custom.yaml
 scene: !include _yaml/scenes.yaml
+shell_command: !include _yaml/shell_command.yaml
 switch: !include _yaml/switch.yaml
 template: !include _yaml/templates.yaml
