@@ -62,3 +62,10 @@ items:
   require_admin: true
   show_in_sidebar: true
   mode: storage
+- id: se_err
+  url_path: se-err
+  title: Requests - Seerr
+  icon: mdi:movie-search
+  require_admin: true
+  show_in_sidebar: true
+  mode: storage

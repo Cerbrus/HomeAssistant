@@ -13,6 +13,7 @@ Dashboards are edited in the UI (storage mode). A redacted clone of their config
 | Home | `cerbrus-home` | Everyone | Main dashboard with the views Home, Energy, Heating, Weather, Media and System |
 | Map | `map` | Everyone, hidden from the sidebar | Built-in map |
 | Plex | `pl-ex` | Admin | Iframe |
+| Requests - Seerr | `se-err` | Admin | Iframe |
 | Suggestions - SuggestArr | `suggest-arr` | Admin | Iframe |
 | Movies - Radarr | `rad-arr` | Admin | Iframe |
 | TV - Sonarr | `son-arr` | Admin | Iframe |
@@ -45,6 +46,6 @@ The sidebar is the main navigation ([ADR-0006](adr/0006-sidebar-as-main-navigati
 | Tools | Studio Code Server, Terminal, pgAdmin, Nginx Proxy Manager, Tailscale, Google Drive Backup | Yes |
 | Activity | Logbook, History, Logs | Yes |
 
-The To-do panel is hidden through `hidden_items`: no to-do lists are in use.
+The To-do panel is hidden through `hidden_items`: no to-do lists are in use. The Seerr app's own ingress panel is hidden the same way: an ingress panel takes its title from the app and cannot be renamed, so the "Requests - Seerr" iframe dashboard replaces it.
 
 After a Sidebar Organizer update, bump the `hacstag` value in `configuration.yaml` so browsers load the new file.

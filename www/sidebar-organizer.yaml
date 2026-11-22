@@ -8,12 +8,13 @@ accordion_mode: true
 text_transformation: none
 hidden_items:
   - todo
+  - db21ed7f_seerr
 custom_groups:
   Daily:
     - calendar
   Media:
     - pl-ex
-    - db21ed7f_seerr
+    - se-err
     - suggest-arr
     - rad-arr
     - son-arr
