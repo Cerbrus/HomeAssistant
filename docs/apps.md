@@ -68,7 +68,7 @@ SuggestArr is the one part of the media stack that is not a Home Assistant app: 
 
 ### Movie size and quality
 
-Radarr rejects every release above 20 GB (Settings > Indexers > Options > Maximum Size). The `Ultra-HD` profile also allows 1080p (HDTV, WEB, Bluray), so a movie without a 4K release under the limit still gets a 1080p one and upgrades when a smaller 4K release appears. Sonarr has no size limit: season packs are larger than that.
+Radarr rejects every release above 20 GB (Settings > Indexers > Options > Maximum Size). The `Ultra-HD` profile also allows 1080p (HDTV, WEB, Bluray), so a movie without a 4K release under the limit still gets a 1080p one and upgrades when a smaller 4K release appears. The profile's cutoff is WEB 2160p: once a movie has a 4K web release or better, Radarr stops upgrading it, so a movie is downloaded at most twice. Sonarr has no size limit: season packs are larger than that.
 
 ### Fake downloads
 
