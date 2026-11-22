@@ -19,6 +19,7 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
 | Media - Remove fake downloads | Every minute | | Runs `shell_command.arr_guard`; writes a logbook entry when something was removed |
 | Media - Protect indexers | 04:30 | | Runs `shell_command.arr_guard_indexers`; writes a logbook entry when an indexer was changed |
+| Herinnering energieleverancier 5 januari 2027 | 09:00 | The date is 4 or 5 January 2027 | Notifies the phone to compare energy suppliers again. One-off; delete it afterwards |
 | Notifications - Backups stale | The Google Drive Backup app reports stale backups | | Notifies the phone |
 
 Notes:
