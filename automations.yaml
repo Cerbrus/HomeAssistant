@@ -521,3 +521,27 @@
         name: Media guard
         message: '{{ result.stdout }}'
   mode: single
+- id: '1795373124336'
+  alias: Media - Search missing
+  description: 'Runs scripts/arr_guard.py --search every Monday night: starts a search
+    for all missing monitored movies and episodes in Radarr and Sonarr, which do not
+    search again on their own.'
+  triggers:
+  - trigger: time
+    at: 03:00:00
+  conditions:
+  - condition: time
+    weekday:
+    - mon
+  actions:
+  - action: shell_command.arr_guard_search
+    response_variable: result
+  - if:
+    - condition: template
+      value_template: '{{ result.stdout | default('''') | trim != '''' }}'
+    then:
+    - action: logbook.log
+      data:
+        name: Media guard
+        message: '{{ result.stdout }}'
+  mode: single
