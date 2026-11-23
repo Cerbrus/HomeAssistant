@@ -15,7 +15,9 @@
 | Living Room | Shutter - Back | Tuya Local | `cover.shutter_back` |
 | Living Room | Shutter - Front | Tuya Local | `cover.shutter_front` |
 | Living Room | Living Room TV | Google Cast, Android TV Remote | Chromecast. `media_player.living_room_tv` (Cast: playback and casting), `media_player.living_room_tv_remote` and `remote.living_room_tv` (Android TV Remote: remote control, apps) |
+| Living Room | HomeBase | Anker eufy Home Security | HomeBase 2: alarm panel, siren, storage |
 | Front of house | Lights - Front Entrance | Tuya Local | Switched at sunset and sunrise |
+| Front of house | Doorbell | Anker eufy Home Security | Video Doorbell Dual, behind the HomeBase. `camera.doorbell`, `event.doorbell_doorbell`, `event.doorbell_detection` |
 | Office | Lights - Office | Tuya Local | |
 | Office | Printer | IPP | Ink levels |
 | Bathroom | Bathroom Fan | Tuya Local | `switch.bathroom_fan`, see below |

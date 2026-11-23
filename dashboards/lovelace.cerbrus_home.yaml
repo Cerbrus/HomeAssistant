@@ -166,6 +166,15 @@ config:
     - type: grid
       cards:
       - type: heading
+        heading: Front door
+        icon: mdi:doorbell-video
+      - type: custom:eufy-camera-card
+        entity: camera.doorbell
+        show_settings: false
+        live_seconds: 60
+        grid_options:
+          columns: full
+      - type: heading
         heading: Climate
         icon: mdi:thermostat
         tap_action:

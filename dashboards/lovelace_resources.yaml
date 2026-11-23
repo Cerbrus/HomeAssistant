@@ -14,3 +14,9 @@ items:
 - id: 4a376120e24043cabd830d6491614fe7
   url: /local/community/power-flow-card-plus/power-flow-card-plus.js?v=618081815-v0.6.1
   type: module
+- id: e129224fc7904526b1743baca9a61575
+  url: /eufy_home_security/eufy-camera-card.js?v=c7d085b9
+  type: module
+- id: 68743930758645e7b76ef2d904154d13
+  url: /eufy_home_security/eufy-homebase-card.js?v=563dd3b3
+  type: module

@@ -21,6 +21,8 @@ Dashboards are edited in the UI (storage mode). A redacted clone of their config
 | Indexers - Prowlarr | `prowl-arr` | Admin | Iframe |
 | Nginx Proxy Manager | `nginx-proxy-manager` | Admin | Iframe |
 
+The Home view opens its middle column with the front door: the eufy camera card shows the doorbell's last still, starts a 60 second live view on its play button and lists the recordings on the HomeBase. Live view is never started automatically, since each start wakes the doorbell, and the card's settings tab is hidden.
+
 The Energy view has a Prices section for the dynamic contract: the all-in electricity price and the return price of this hour with a 24 hour trend, how this hour compares with the rest of the day, the cheapest and the most expensive hour, and today's gas price ([ADR-0024](adr/0024-energy-cost-energyzero-plus-markup.md)).
 
 The Media view shows what the media stack is doing without opening the apps: upcoming episodes and movies from the Sonarr and Radarr calendars, Transmission's speeds, torrent counts and switches, the number of Plex streams, and what is playing on the TV and Spotify. It uses built-in cards only.

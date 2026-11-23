@@ -8,6 +8,7 @@
 | ICS-2000 (KlikAanKlikUit) | Marketplace | `_yaml/light.yaml` | Bedroom light |
 | Bosch thermostat (EasyControl CT200, cloud API) | Marketplace | UI | Heating zone, boiler, hot water tank ([ADR-0021](adr/0021-cloud-integrations-bosch-solis.md)) |
 | SolisCloud | Marketplace | UI | Solar inverter ([ADR-0021](adr/0021-cloud-integrations-bosch-solis.md)) |
+| Anker eufy Home Security | Marketplace | UI | Video doorbell and HomeBase: ring and detection events, live view, alarm panel ([ADR-0027](adr/0027-eufy-via-eufy-home-security.md)) |
 | DSMR Reader | Core, over MQTT | UI | Smart meter: electricity and gas |
 | MQTT | Core | UI | Mosquitto broker |
 | Forecast.Solar | Core | UI | Solar production forecast |
@@ -66,6 +67,8 @@ No individual device consumption is configured.
 ## Marketplace frontend downloads
 
 Bubble Card, Mushroom, Power Flow Card Plus, Weather Radar Card, Pi-hole Card and Sidebar Organizer. Only what a dashboard uses is kept; a new card is downloaded after the owner confirms it ([ADR-0019](adr/0019-lean-marketplace.md)).
+
+The eufy camera card and the eufy HomeBase card are not downloads: the Anker eufy Home Security integration serves them and registers their dashboard resources itself.
 
 ## Removed on 2026-11-21
 
