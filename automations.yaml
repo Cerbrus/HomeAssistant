@@ -545,3 +545,61 @@
         name: Media guard
         message: '{{ result.stdout }}'
   mode: single
+- id: '1795418868593'
+  alias: Herinnering NS abonnement opzeggen 16 december 2026
+  description: Eenmalige herinnering op 2026-12-16 om het NS abonnement op te zeggen.
+    Mag daarna weg.
+  triggers:
+  - trigger: time
+    at: 09:00:00
+  conditions:
+  - condition: template
+    value_template: '{{ now().strftime(''%Y-%m-%d'') == ''2026-12-16'' }}'
+  actions:
+  - action: notify.send_message
+    target:
+      entity_id: notify.iphone_michiel
+    data:
+      title: NS abonnement opzeggen
+      message: Vandaag het NS abonnement opzeggen.
+  mode: single
+- id: '1795471468340'
+  alias: Notifications - Doorbell not charging or battery low
+  description: Notifies the phone when the doorbell's battery drops below 30 % or
+    the doorbell has not been charging for 24 hours. The doorbell runs on a battery
+    that the doorbell wire keeps full; a failed transformer or wire drains it without
+    notice.
+  triggers:
+  - alias: Doorbell battery drops below 30 %
+    trigger: numeric_state
+    entity_id: sensor.doorbell_battery
+    below: 30
+    id: battery_low
+  - alias: Doorbell has not been charging for 24 hours
+    trigger: state
+    entity_id: binary_sensor.doorbell_charging
+    to: 'off'
+    for:
+      hours: 24
+    id: not_charging
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: battery_low
+      sequence:
+      - alias: Notify that the doorbell battery is low
+        action: notify.mobile_app_iphone_michiel
+        data:
+          title: Doorbell battery low
+          message: The doorbell battery is at {{ states('sensor.doorbell_battery')
+            }} %. Check the doorbell wire and transformer.
+    default:
+    - alias: Notify that the doorbell is not charging
+      action: notify.mobile_app_iphone_michiel
+      data:
+        title: Doorbell not charging
+        message: The doorbell has not been charging for 24 hours. Battery at {{ states('sensor.doorbell_battery')
+          }} %.
+  mode: single
