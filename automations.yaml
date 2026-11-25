@@ -603,3 +603,55 @@
         message: The doorbell has not been charging for 24 hours. Battery at {{ states('sensor.doorbell_battery')
           }} %.
   mode: single
+- id: '1795649415934'
+  alias: Notifications - Address banned
+  description: Notifies the phone when Home Assistant bans an address after too many
+    failed logins. A ban is lifted by removing the address from ip_bans.yaml and restarting
+    Home Assistant.
+  triggers:
+  - alias: Trigger when the ban notification is created or replaced
+    trigger: persistent_notification
+    notification_id: ip-ban
+    update_type:
+    - added
+    - updated
+  conditions: []
+  actions:
+  - alias: Notify that an address was banned
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Address banned
+      message: '{{ trigger.notification.message }}'
+      data:
+        push:
+          interruption-level: time-sensitive
+  mode: queued
+- id: '1795649425907'
+  alias: Notifications - Updates pending
+  description: Notifies the phone every Saturday morning which updates are waiting,
+    so software that is reachable from the internet does not stay unpatched unnoticed.
+    Nothing is installed automatically.
+  triggers:
+  - alias: Every day at 10:00
+    trigger: time
+    at: '10:00:00'
+  conditions:
+  - alias: It is Saturday
+    condition: time
+    weekday:
+    - sat
+  - alias: At least one update is waiting
+    condition: template
+    value_template: '{{ states.update | selectattr(''state'', ''eq'', ''on'') | list
+      | count }}'
+  actions:
+  - alias: Notify which updates are waiting
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Updates pending
+      message: '{% set pending = states.update | selectattr(''state'', ''eq'', ''on'')
+        | list %}{{ pending | count }} waiting: {{ pending | map(attribute=''name'')
+        | join('', '') }}'
+      data:
+        url: /config/updates
+  mode: single
