@@ -16,6 +16,8 @@ TIMEOUT = 20
 TOP = 5
 RECENT = 15
 PATH_LENGTH = 60
+BURST_GAP = 120
+BURST_HOSTS = 3
 BAN_KEY = re.compile(r"^([0-9a-fA-F.:]+):\s*$")
 
 
@@ -93,6 +95,36 @@ def located(row, address, places):
     }
 
 
+def bursts(probes):
+    found = []
+    current = {}
+    for probe in sorted(probes, key=lambda probe: probe["at"]):
+        burst = current.get(probe["a"])
+        if not burst or (probe["at"] - burst["end"]).total_seconds() > BURST_GAP:
+            burst = current[probe["a"]] = {"address": probe["a"], "start": probe["at"], "probes": []}
+            found.append(burst)
+        burst["end"] = probe["at"]
+        burst["probes"].append(probe)
+    return sorted(found, key=lambda burst: burst["start"], reverse=True)
+
+
+def summary(burst):
+    probes = burst["probes"]
+    hosts = [name for name, _ in Counter(probe["h"] for probe in probes).most_common()]
+    paths = Counter(probe["p"][:PATH_LENGTH] for probe in probes)
+    return {
+        "time": burst["start"].strftime("%d-%m %H:%M:%S"),
+        "seconds": round((burst["end"] - burst["start"]).total_seconds()),
+        "count": len(probes),
+        "address": burst["address"],
+        "hosts": hosts[:BURST_HOSTS],
+        "more_hosts": max(len(hosts) - BURST_HOSTS, 0),
+        "path": paths.most_common(1)[0][0],
+        "paths": len(paths),
+        "statuses": sorted({probe["s"] for probe in probes}),
+    }
+
+
 def main():
     now = datetime.now().astimezone()
     midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -108,9 +140,9 @@ def main():
 
     banned = bans()
     addresses = top(Counter(probe["a"] for probe in last_day))
-    recent = last_day[-RECENT:][::-1]
+    recent = bursts(last_day)[:RECENT]
     places = locations(
-        [row["name"] for row in addresses] + [probe["a"] for probe in recent], now
+        [row["name"] for row in addresses] + [burst["address"] for burst in recent], now
     )
     print(json.dumps({
         "today": today,
@@ -119,20 +151,7 @@ def main():
         "hosts": top(Counter(probe["h"] for probe in last_day)),
         "addresses": [located(row, row["name"], places) for row in addresses],
         "paths": top(Counter(probe["p"][:PATH_LENGTH] for probe in last_day)),
-        "recent": [
-            located(
-                {
-                    "time": probe["at"].strftime("%d-%m %H:%M"),
-                    "address": probe["a"],
-                    "host": probe["h"],
-                    "path": probe["p"][:PATH_LENGTH],
-                    "status": probe["s"],
-                },
-                probe["a"],
-                places,
-            )
-            for probe in recent
-        ],
+        "recent": [located(summary(burst), burst["address"], places) for burst in recent],
         "bans": len(banned),
         "banned": banned,
         "updated": now.isoformat(timespec="seconds"),

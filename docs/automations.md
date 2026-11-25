@@ -61,7 +61,7 @@ Notes:
 | `sensor.non_recyclable_waste_pickup_progress`, `sensor.organic_waste_pickup_progress`, `sensor.packages_waste_pickup_progress` | UI template helpers | Percentage of the pickup cycle elapsed (cycles of 4, 2 and 3 weeks) |
 | `sensor.cpu_temperature` | `_yaml/command_line.yaml` | CPU temperature of the Pi |
 | `sensor.external_ip_address` | `_yaml/command_line.yaml` | Public address, refreshed every five minutes |
-| `sensor.proxy_probes_today` | `_yaml/command_line.yaml` | Requests from outside addresses that the proxy answered with a 4xx status today, from `scripts/probe_stats.py` every five minutes. Attributes: the last 24 hours in total, per host name, per address and per path, the last 15 requests, each address with its country and city, and the banned addresses ([ADR-0031](adr/0031-probe-log-and-security-view.md)) |
+| `sensor.proxy_probes_today` | `_yaml/command_line.yaml` | Requests from outside addresses that the proxy answered with a 4xx status today, from `scripts/probe_stats.py` every five minutes. Attributes: the last 24 hours in total, per host name, per address and per path, the last 15 bursts of requests per address, each address with its country and city, and the banned addresses ([ADR-0031](adr/0031-probe-log-and-security-view.md)) |
 | `input_number.zero_value` | `_yaml/input_number.yaml` | Constant zero for dashboard cards |
 | `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed and whose ban is lifted automatically |
 | `input_number.energy_price_electricity_purchase_fee`, `input_number.energy_price_gas_purchase_fee` | UI helpers | The supplier's purchase fee per kWh and per m³, including VAT |
