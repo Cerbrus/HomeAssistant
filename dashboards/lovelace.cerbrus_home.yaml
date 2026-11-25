@@ -1250,66 +1250,45 @@ config:
         grid_options:
           columns: full
     - type: grid
+      column_span: 2
       cards:
       - type: heading
         heading: Last 24 hours
         icon: mdi:chart-bar
       - type: markdown
-        content: '| Host name | Probes |
-
-          | :-- | --: |
-
-          {% for row in state_attr(''sensor.proxy_probes_today'', ''hosts'') or [] %}| {{ row.name }} | {{ row.count }} |
-
-          {% else %}| None | |
-
-          {% endfor %}'
+        content: <table width="100%"><tr><th align="left">Host name</th><th align="right">Probes</th></tr>{% for row in state_attr('sensor.proxy_probes_today',
+          'hosts') or [] %}<tr><td>{{ row.name | replace('.cerbrus.nl', '') }}</td><td align="right">{{ row.count }}</td></tr>{%
+          else %}<tr><td>None</td><td></td></tr>{% endfor %}</table>
         grid_options:
-          columns: full
+          columns: 12
       - type: markdown
-        content: '| Address | Probes |
-
-          | :-- | --: |
-
-          {% for row in state_attr(''sensor.proxy_probes_today'', ''addresses'') or [] %}| {{ row.name }} | {{ row.count }}
-          |
-
-          {% else %}| None | |
-
-          {% endfor %}'
+        content: <table width="100%"><tr><th align="left">Address</th><th align="right">Probes</th></tr>{% for row in state_attr('sensor.proxy_probes_today',
+          'addresses') or [] %}<tr><td>{{ row.name }}</td><td align="right">{{ row.count }}</td></tr>{% else %}<tr><td>None</td><td></td></tr>{%
+          endfor %}</table>
         grid_options:
-          columns: full
+          columns: 12
       - type: markdown
-        content: '| Path | Probes |
-
-          | :-- | --: |
-
-          {% for row in state_attr(''sensor.proxy_probes_today'', ''paths'') or [] %}| `{{ row.name }}` | {{ row.count }}
-          |
-
-          {% else %}| None | |
-
-          {% endfor %}'
+        content: <table width="100%"><tr><th align="left">Path</th><th align="right">Probes</th></tr>{% for row in state_attr('sensor.proxy_probes_today',
+          'paths') or [] %}<tr><td><code>{{ row.name | e }}</code></td><td align="right">{{ row.count }}</td></tr>{% else
+          %}<tr><td>None</td><td></td></tr>{% endfor %}</table>
         grid_options:
           columns: full
     - type: grid
+      column_span: 2
       cards:
       - type: heading
         heading: Latest probes
         icon: mdi:format-list-bulleted
       - type: markdown
-        content: '| Time | Address | Host name | Path | Status |
-
-          | :-- | :-- | :-- | :-- | --: |
-
-          {% for row in state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}| {{ row.time }} | {{ row.address }}
-          | {{ row.host | replace(''.cerbrus.nl'', '''') }} | `{{ row.path }}` | {{ row.status }} |
-
-          {% else %}| None | | | | |
-
-          {% endfor %}'
+        content: <table width="100%"><tr><th align="left">Time</th><th align="left">Address</th><th align="left">Host name</th><th
+          align="left">Path</th><th align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probes_today', 'recent')
+          or [] %}<tr><td>{{ row.time }}</td><td>{{ row.address }}</td><td>{{ row.host | replace('.cerbrus.nl', '') }}</td><td><code>{{
+          row.path | e }}</code></td><td align="right">{{ row.status }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td></tr>{%
+          endfor %}</table>
         grid_options:
           columns: full
+    - type: grid
+      cards:
       - type: heading
         heading: Bans
         icon: mdi:account-cancel
