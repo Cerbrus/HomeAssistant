@@ -655,3 +655,44 @@
       data:
         url: /config/updates
   mode: single
+- id: '1795650374614'
+  alias: Security - Lift ban on trusted network
+  description: 'Lifts a ban automatically when the banned address starts with the
+    prefix in input_text.login_notification_trusted_prefix: removes it from ip_bans.yaml
+    and restarts Home Assistant, which is the only way to make it forget a ban. Addresses
+    outside the home stay banned.'
+  triggers:
+  - alias: Trigger when the ban notification is created or replaced
+    trigger: persistent_notification
+    notification_id: ip-ban
+    update_type:
+    - added
+    - updated
+  conditions:
+  - alias: The banned address starts with the trusted prefix
+    condition: template
+    value_template: '{% set prefix = states(''input_text.login_notification_trusted_prefix'')
+      %}{% set address = trigger.notification.message.split('' '') | last %}{{ has_value(''input_text.login_notification_trusted_prefix'')
+      and prefix | length >= 4 and address.startswith(prefix) }}'
+  actions:
+  - alias: Remove the address from the ban list
+    action: shell_command.unban_address
+    data:
+      address: '{{ trigger.notification.message.split('' '') | last }}'
+    response_variable: unban
+  - alias: Stop when the address could not be removed
+    condition: template
+    value_template: '{{ unban.returncode == 0 }}'
+  - alias: Notify that the ban is being lifted
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Ban lifted
+      message: '{{ trigger.notification.message.split('' '') | last }} is on the home
+        network. Its ban is removed and Home Assistant restarts now.'
+  - alias: Dismiss the ban notification
+    action: persistent_notification.dismiss
+    data:
+      notification_id: ip-ban
+  - alias: Restart Home Assistant so it forgets the ban
+    action: homeassistant.restart
+  mode: single
