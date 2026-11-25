@@ -49,3 +49,6 @@ backups/
 
 # Development
 .claude/
+
+# Probe statistics
+.probe_geo_cache.json

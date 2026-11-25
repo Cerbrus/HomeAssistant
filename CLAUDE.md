@@ -23,6 +23,7 @@ These rules apply to every change to the setup, whether it is made in this repos
 ## www Directory Structure
 
 - `www/icons/` - Dashboard icons (media stack logos, mascot)
+- `www/flags/` - Country flags for the Security view, named by lower-case country code
 - `www/sidebar-organizer.yaml` - Sidebar grouping for the Sidebar Organizer module
 
 ## Other directories

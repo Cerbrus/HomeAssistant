@@ -9,6 +9,7 @@
 | `automations.yaml`, `scripts.yaml` | Written by the HA UI editors, tracked in git |
 | `custom_templates/` | Jinja macros shared between templates |
 | `www/icons/` | Dashboard icons (media stack logos, mascot) |
+| `www/flags/` | Country flags for the Security view, named by lower-case country code |
 | `www/sidebar-organizer.yaml` | Sidebar grouping, see [dashboards.md](dashboards.md) |
 | `dashboards/` | Redacted clone of the UI-managed dashboards, see [dashboards.md](dashboards.md) |
 | `tools/` | `export_dashboards.py`, which refreshes that clone |

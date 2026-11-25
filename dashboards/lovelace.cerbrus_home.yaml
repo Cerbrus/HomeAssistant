@@ -1262,9 +1262,11 @@ config:
         grid_options:
           columns: 12
       - type: markdown
-        content: <table width="100%"><tr><th align="left">Address</th><th align="right">Probes</th></tr>{% for row in state_attr('sensor.proxy_probes_today',
-          'addresses') or [] %}<tr><td>{{ row.name }}</td><td align="right">{{ row.count }}</td></tr>{% else %}<tr><td>None</td><td></td></tr>{%
-          endfor %}</table>
+        content: <table width="100%"><tr><th align="left">Address</th><th align="left">Country</th><th></th><th align="left">City</th><th
+          align="right">Probes</th></tr>{% for row in state_attr('sensor.proxy_probes_today', 'addresses') or [] %}<tr><td>{{
+          row.name }}</td><td>{{ row.country }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20"
+          alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.city }}</td><td align="right">{{ row.count }}</td></tr>{%
+          else %}<tr><td>None</td><td></td><td></td><td></td><td></td></tr>{% endfor %}</table>
         grid_options:
           columns: 12
       - type: markdown
@@ -1280,10 +1282,12 @@ config:
         heading: Latest probes
         icon: mdi:format-list-bulleted
       - type: markdown
-        content: <table width="100%"><tr><th align="left">Time</th><th align="left">Address</th><th align="left">Host name</th><th
-          align="left">Path</th><th align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probes_today', 'recent')
-          or [] %}<tr><td>{{ row.time }}</td><td>{{ row.address }}</td><td>{{ row.host | replace('.cerbrus.nl', '') }}</td><td><code>{{
-          row.path | e }}</code></td><td align="right">{{ row.status }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td></tr>{%
+        content: <table width="100%"><tr><th align="left">Time</th><th align="left">Address</th><th align="left">Country</th><th></th><th
+          align="left">City</th><th align="left">Host name</th><th align="left">Path</th><th align="right">Status</th></tr>{%
+          for row in state_attr('sensor.proxy_probes_today', 'recent') or [] %}<tr><td>{{ row.time }}</td><td>{{ row.address
+          }}</td><td>{{ row.country }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{
+          row.code | upper }}">{% endif %}</td><td>{{ row.city }}</td><td>{{ row.host | replace('.cerbrus.nl', '') }}</td><td><code>{{
+          row.path | e }}</code></td><td align="right">{{ row.status }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
           endfor %}</table>
         grid_options:
           columns: full

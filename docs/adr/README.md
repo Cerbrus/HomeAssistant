@@ -38,6 +38,7 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0030](0030-proxy-error-pages-in-place.md) | 2026-11-26 | Show the custom error pages in place for errors of the proxy | Recorded |
 | [0031](0031-probe-log-and-security-view.md) | 2026-11-26 | Show probing traffic with an own log and script instead of an analyser app | Recorded |
 | [0032](0032-lift-bans-on-the-home-network.md) | 2026-11-26 | Lift bans on the home network automatically | Recorded |
+| [0033](0033-locate-probing-addresses-online.md) | 2026-11-26 | Locate probing addresses with an online lookup | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 
