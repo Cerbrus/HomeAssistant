@@ -27,7 +27,7 @@ The Energy view has a Prices section for the dynamic contract: the all-in electr
 
 The Media view shows what the media stack is doing without opening the apps: upcoming episodes and movies from the Sonarr and Radarr calendars, Transmission's speeds, torrent counts and switches, the number of Plex streams, and what is playing on the TV and Spotify. It uses built-in cards only.
 
-The iframe dashboards use the `iframe` dashboard strategy and load the app's public `cerbrus.nl` host name. Their paths contain a hyphen because Home Assistant requires one in dashboard paths.
+The iframe dashboards use the `iframe` dashboard strategy and load the app's `cerbrus.nl` host name. Their paths contain a hyphen because Home Assistant requires one in dashboard paths. The Radarr, Sonarr, Prowlarr, Bazarr and SuggestArr host names are LAN only ([ADR-0028](adr/0028-media-admin-apps-lan-only.md)), so those dashboards stay empty when Home Assistant is opened from outside the home.
 
 Radarr, Sonarr and Prowlarr redirect a logged-out visitor to an `http://` login URL, which a browser refuses to show inside the HTTPS Home Assistant page (blank frame). Their proxy hosts in Nginx Proxy Manager therefore carry `proxy_redirect http://$host/ https://$host/;` in the custom Nginx configuration. A new arr-style app in an iframe needs the same line.
 

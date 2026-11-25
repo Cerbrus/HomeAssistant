@@ -31,24 +31,35 @@ flowchart LR
 - `cerbrus.nl` subdomains point at a DuckDNS name that follows the dynamic public address ([ADR-0002](adr/0002-public-access-duckdns-npm.md)).
 - Nginx Proxy Manager is the only service reachable from outside. It terminates TLS with Let's Encrypt certificates per hostname and routes by host name ([ADR-0013](adr/0013-npm-only-public-entry.md)).
 - LAN clients resolve `cerbrus.nl` names straight to the Pi through Pi-hole, so they never use the modem's NAT hairpin ([ADR-0012](adr/0012-split-horizon-dns.md)).
-- Admin surfaces (proxy admin, Pi-hole admin, HA-MCP) are LAN only. Tailscale covers remote administration.
+- Admin surfaces (proxy admin, Pi-hole admin, HA-MCP) and the media admin apps are LAN only ([ADR-0028](adr/0028-media-admin-apps-lan-only.md)). Tailscale covers remote administration.
 - Home Assistant Cloud is not used.
 
-### Public host names
+### Host names
 
-| Host name | Service |
-| --- | --- |
-| `ha` | Home Assistant |
-| `plex`, `stream` | Plex |
-| `movies`, `radarr` | Radarr |
-| `tv`, `sonarr` | Sonarr |
-| `subtitles`, `bazarr` | Bazarr |
-| `indexers`, `prowlarr` | Prowlarr |
-| `requests`, `seerr` | Seerr |
-| `suggestions`, `suggestarr` | SuggestArr on the server Pi |
-| `recipes`, `shopping`, `pokemon` | Apps on the server Pi |
-| `proxy`, `pihole` | Admin UIs, LAN only |
-| `404` | Custom 404 page |
+| Host name | Service | Reachable from |
+| --- | --- | --- |
+| `ha` | Home Assistant | Internet |
+| `plex`, `stream` | Plex | Internet |
+| `requests`, `seerr` | Seerr | Internet |
+| `recipes`, `shopping`, `pokemon` | Apps on the server Pi | Internet |
+| `404`, `error` | Custom error pages, one per status code (`error.cerbrus.nl/403`) | Internet |
+| `movies`, `radarr` | Radarr | LAN only |
+| `tv`, `sonarr` | Sonarr | LAN only |
+| `subtitles`, `bazarr` | Bazarr | LAN only |
+| `indexers`, `prowlarr` | Prowlarr | LAN only |
+| `suggestions`, `suggestarr` | SuggestArr on the server Pi | LAN only |
+| `proxy`, `pihole` | Admin UIs | LAN only |
+
+Errors that the proxy itself produces, such as the 403 of a LAN only host or the 502 of an app that is down, show the matching page of `error.cerbrus.nl` in place, with the original address and status code. Error responses of the apps are passed through ([ADR-0030](adr/0030-proxy-error-pages-in-place.md)).
+
+### Hardening
+
+Decided in [ADR-0029](adr/0029-harden-public-logins.md):
+
+- Every proxy host has Force SSL and HSTS on. Block Common Exploits is on everywhere except Plex.
+- A request that matches no proxy host (the bare domain, a request by address) is redirected to `https://error.cerbrus.nl/404`. Unknown subdomains are redirected to the 404 page as well.
+- Home Assistant bans an address after three failed logins. The setting is `login_attempts_threshold` under **Settings > System > Network**; it is UI-managed and not in `configuration.yaml`. Bans are written to `ip_bans.yaml` in the configuration folder; to lift one, remove the entry over SSH and restart Home Assistant.
+- The Home Assistant account that logs in from outside uses an authenticator app as second factor.
 
 ## Deployment
 

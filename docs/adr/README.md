@@ -33,6 +33,9 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0025](0025-arr-guard-script-over-cleanuparr.md) | 2026-11-22 | Remove fake downloads with an own script instead of Cleanuparr | Recorded |
 | [0026](0026-suggestarr-on-the-server-pi.md) | 2026-11-22 | Run SuggestArr as a container on the server Pi | Recorded |
 | [0027](0027-eufy-via-eufy-home-security.md) | 2026-11-23 | Integrate the eufy doorbell with Anker eufy Home Security | Recorded |
+| [0028](0028-media-admin-apps-lan-only.md) | 2026-11-25 | Restrict the media admin apps to the LAN | Recorded |
+| [0029](0029-harden-public-logins.md) | 2026-11-25 | Harden the logins that stay public | Recorded |
+| [0030](0030-proxy-error-pages-in-place.md) | 2026-11-26 | Show the custom error pages in place for errors of the proxy | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 
