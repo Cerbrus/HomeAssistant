@@ -10,7 +10,7 @@ Dashboards are edited in the UI (storage mode). A redacted clone of their config
 
 | Dashboard | Path | Access | Type |
 | --- | --- | --- | --- |
-| Home | `cerbrus-home` | Everyone | Main dashboard with the views Home, Energy, Heating, Weather, Media and System |
+| Home | `cerbrus-home` | Everyone | Main dashboard with the views Home, Energy, Heating, Weather, Media, System and Security |
 | Map | `map` | Everyone, hidden from the sidebar | Built-in map |
 | Plex | `pl-ex` | Admin | Iframe |
 | Requests - Seerr | `se-err` | Admin | Iframe |
@@ -26,6 +26,8 @@ The Home view opens its middle column with the front door: the eufy camera card 
 The Energy view has a Prices section for the dynamic contract: the all-in electricity price and the return price of this hour with a 24 hour trend, how this hour compares with the rest of the day, the cheapest and the most expensive hour, and today's gas price ([ADR-0024](adr/0024-energy-cost-energyzero-plus-markup.md)).
 
 The Media view shows what the media stack is doing without opening the apps: upcoming episodes and movies from the Sonarr and Radarr calendars, Transmission's speeds, torrent counts and switches, the number of Plex streams, and what is playing on the TV and Spotify. It uses built-in cards only.
+
+The Security view shows the probing traffic that the proxy refused ([ADR-0031](adr/0031-probe-log-and-security-view.md)): today's count, the count per day as a bar chart, and for the last 24 hours the most probed host names, the most active addresses, the most requested paths and the latest 15 requests. Below that it lists the addresses that Home Assistant banned and when the ban notification fired. Everything comes from `sensor.proxy_probes_today` and its attributes, rendered with built-in tile, statistics graph, markdown and activity cards; the addresses are in the sensor, not in the dashboard configuration.
 
 The iframe dashboards use the `iframe` dashboard strategy and load the app's `cerbrus.nl` host name. Their paths contain a hyphen because Home Assistant requires one in dashboard paths. The Radarr, Sonarr, Prowlarr, Bazarr and SuggestArr host names are LAN only ([ADR-0028](adr/0028-media-admin-apps-lan-only.md)), so those dashboards stay empty when Home Assistant is opened from outside the home.
 
