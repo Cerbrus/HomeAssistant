@@ -1272,7 +1272,7 @@ config:
           'paths') or [] %}<tr><td><code>{{ row.name | e }}</code></td><td align="right">{{ row.count }}</td></tr>{% else
           %}<tr><td>None</td><td></td></tr>{% endfor %}</table>
         grid_options:
-          columns: full
+          columns: 12
     - type: grid
       column_span: 2
       cards:

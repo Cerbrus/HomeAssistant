@@ -18,6 +18,7 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Notifications - Boiler needs attention | Refill needed; system pressure below 1 bar for 10 minutes; a blocking or locking fault code; a maintenance request | | Critical alert on the phone with the sensor and its value; the maintenance request as a normal notification |
 | Notifications - Doorbell not charging or battery low | Doorbell battery below 30 %; doorbell not charging for 24 hours | | Notifies the phone with the battery level |
 | Notifications - Address banned | The "Too many login attempts" notification (`ip-ban`) is created or replaced | | Time-sensitive notification on the phone with the banned address |
+| Security - Lift ban on trusted network | The "Too many login attempts" notification (`ip-ban`) is created or replaced | The banned address starts with the value of `input_text.login_notification_trusted_prefix` | Runs `shell_command.unban_address` for that address, notifies the phone, dismisses the notification and restarts Home Assistant ([ADR-0032](adr/0032-lift-bans-on-the-home-network.md)) |
 | Notifications - Updates pending | 10:00 | It is Saturday and at least one update is waiting | Notifies the phone how many updates wait and which; tapping it opens the updates page |
 | Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
 | Media - Remove fake downloads | Every minute | | Runs `shell_command.arr_guard`; writes a logbook entry when something was removed |
@@ -62,7 +63,7 @@ Notes:
 | `sensor.external_ip_address` | `_yaml/command_line.yaml` | Public address, refreshed every five minutes |
 | `sensor.proxy_probes_today` | `_yaml/command_line.yaml` | Requests from outside addresses that the proxy answered with a 4xx status today, from `scripts/probe_stats.py` every five minutes. Attributes: the last 24 hours in total, per host name, per address and per path, the last 15 requests, and the banned addresses ([ADR-0031](adr/0031-probe-log-and-security-view.md)) |
 | `input_number.zero_value` | `_yaml/input_number.yaml` | Constant zero for dashboard cards |
-| `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed |
+| `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed and whose ban is lifted automatically |
 | `input_number.energy_price_electricity_purchase_fee`, `input_number.energy_price_gas_purchase_fee` | UI helpers | The supplier's purchase fee per kWh and per m³, including VAT |
 | `input_number.energy_price_electricity_energy_tax`, `input_number.energy_price_gas_energy_tax` | UI helpers | Energy tax per kWh and per m³, including VAT |
 | `sensor.energy_price_electricity_all_in`, `sensor.energy_price_gas_all_in` | UI template helpers | EnergyZero market price plus purchase fee and energy tax; the Energy dashboard's consumption prices |

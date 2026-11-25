@@ -1,3 +1,4 @@
 arr_guard: python3 /config/scripts/arr_guard.py
 arr_guard_indexers: python3 /config/scripts/arr_guard.py --indexers
 arr_guard_search: python3 /config/scripts/arr_guard.py --search
+unban_address: python3 /config/scripts/unban_address.py {{ address }}
