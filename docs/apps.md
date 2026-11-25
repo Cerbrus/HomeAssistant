@@ -27,6 +27,21 @@ The link goes before `</body>`, not `</head>`. Nginx Proxy Manager loads its Tab
 
 The theme only applies through the proxy host; the direct admin port shows the stock interface.
 
+### Shared Nginx snippets
+
+Two files in the `nginx/custom` folder of the proxy's configuration are not managed through its interface. They are part of the app's backup and not of this repository.
+
+`server_proxy.conf` is included by every proxy host:
+
+- It answers errors that the proxy itself produces with the matching page of `error.cerbrus.nl`, in place ([ADR-0030](adr/0030-proxy-error-pages-in-place.md)).
+- It writes a second access log, `probes_access.log`, and serves that file as `/__probes` to the LAN only.
+
+`http_top.conf` defines that log: one JSON line per request that came from an outside address and got a 4xx answer, with time, address, host name, method, path, status and user agent. The app's own log rotation covers the file because its name ends in `_access.log`; it is lost when the app is reinstalled.
+
+`scripts/probe_stats.py` reads the log from `https://proxy.cerbrus.nl/__probes` and condenses it into `sensor.proxy_probes_today`, which feeds the Security view ([dashboards.md](dashboards.md), [ADR-0031](adr/0031-probe-log-and-security-view.md)). The count is an indication, not a verdict: an own device outside the home that gets a 401 or 404 is counted too. Requests that match no proxy host are not in the log.
+
+To change a snippet: write the file inside the app's container, run `nginx -t`, then `nginx -s reload`.
+
 ## Configuration and maintenance
 
 | App | Purpose | State |

@@ -17,6 +17,8 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Notifications - Freezer socket off or unreachable | Freezer socket off for a minute; unreachable for 15 minutes | | Off: critical alert on the phone. Unreachable: time-sensitive notification |
 | Notifications - Boiler needs attention | Refill needed; system pressure below 1 bar for 10 minutes; a blocking or locking fault code; a maintenance request | | Critical alert on the phone with the sensor and its value; the maintenance request as a normal notification |
 | Notifications - Doorbell not charging or battery low | Doorbell battery below 30 %; doorbell not charging for 24 hours | | Notifies the phone with the battery level |
+| Notifications - Address banned | The "Too many login attempts" notification (`ip-ban`) is created or replaced | | Time-sensitive notification on the phone with the banned address |
+| Notifications - Updates pending | 10:00 | It is Saturday and at least one update is waiting | Notifies the phone how many updates wait and which; tapping it opens the updates page |
 | Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
 | Media - Remove fake downloads | Every minute | | Runs `shell_command.arr_guard`; writes a logbook entry when something was removed |
 | Media - Protect indexers | 04:30 | | Runs `shell_command.arr_guard_indexers`; writes a logbook entry when an indexer was changed |
@@ -35,6 +37,8 @@ Notes:
 - Phone notifications go through the `notify.mobile_app_iphone_michiel` action, not the notify entity: only the action accepts the `push` data that makes an alert critical or time-sensitive.
 - An unreachable freezer socket is not treated as a power loss. The Tuya devices can lose their address after a DHCP renewal ([ADR-0017](adr/0017-tuya-dynamic-leases-until-new-modem.md)), and the socket keeps its power then.
 - The doorbell runs on a battery that the doorbell wire keeps full. The 24 hour "not charging" timer starts again after a Home Assistant restart or a moment of the doorbell being unavailable, so the battery threshold is the alert that always comes.
+- Home Assistant bans an address after three failed logins ([ADR-0029](adr/0029-harden-public-logins.md)). The ban notification goes to the phone because a ban can hit an own device; how to lift one is in [architecture.md](architecture.md#hardening).
+- The updates notification only reports. Nothing is installed automatically.
 - Home Assistant has no setting to leave addresses out of the "Login attempt failed" notification, so the dismiss automation removes it afterwards. The warning from `homeassistant.components.http.ban` stays in the log. The trusted prefix is IPv4 only and lives in a UI helper, which keeps the address out of this repository.
 
 ## Scripts
@@ -56,6 +60,7 @@ Notes:
 | `sensor.non_recyclable_waste_pickup_progress`, `sensor.organic_waste_pickup_progress`, `sensor.packages_waste_pickup_progress` | UI template helpers | Percentage of the pickup cycle elapsed (cycles of 4, 2 and 3 weeks) |
 | `sensor.cpu_temperature` | `_yaml/command_line.yaml` | CPU temperature of the Pi |
 | `sensor.external_ip_address` | `_yaml/command_line.yaml` | Public address, refreshed every five minutes |
+| `sensor.proxy_probes_today` | `_yaml/command_line.yaml` | Requests from outside addresses that the proxy answered with a 4xx status today, from `scripts/probe_stats.py` every five minutes. Attributes: the last 24 hours in total, per host name, per address and per path, the last 15 requests, and the banned addresses ([ADR-0031](adr/0031-probe-log-and-security-view.md)) |
 | `input_number.zero_value` | `_yaml/input_number.yaml` | Constant zero for dashboard cards |
 | `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed |
 | `input_number.energy_price_electricity_purchase_fee`, `input_number.energy_price_gas_purchase_fee` | UI helpers | The supplier's purchase fee per kWh and per m³, including VAT |

@@ -12,7 +12,7 @@
 | `www/sidebar-organizer.yaml` | Sidebar grouping, see [dashboards.md](dashboards.md) |
 | `dashboards/` | Redacted clone of the UI-managed dashboards, see [dashboards.md](dashboards.md) |
 | `tools/` | `export_dashboards.py`, which refreshes that clone |
-| `scripts/` | Scripts that Home Assistant runs through `shell_command`, see [apps.md](apps.md#fake-downloads) |
+| `scripts/` | Scripts that Home Assistant runs through `shell_command` or a `command_line` sensor, see [apps.md](apps.md#fake-downloads) and [apps.md](apps.md#shared-nginx-snippets) |
 | `docs/` | This documentation and the ADRs |
 
 ## YAML domains
@@ -20,7 +20,7 @@
 | File | Purpose |
 | --- | --- |
 | `_yaml/climate.yaml` | Generic thermostat that drives the Pi's cooling fan |
-| `_yaml/command_line.yaml` | CPU temperature sensor, external IP address sensor |
+| `_yaml/command_line.yaml` | CPU temperature sensor, external IP address sensor, proxy probes sensor |
 | `_yaml/input_number.yaml` | `input_number.zero_value`, a constant for dashboard cards |
 | `_yaml/light.yaml` | KlikAanKlikUit lights through the ICS-2000 hub |
 | `_yaml/panel_custom.yaml` | Sidebar shortcuts into settings pages |

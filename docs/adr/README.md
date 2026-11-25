@@ -36,6 +36,7 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0028](0028-media-admin-apps-lan-only.md) | 2026-11-25 | Restrict the media admin apps to the LAN | Recorded |
 | [0029](0029-harden-public-logins.md) | 2026-11-25 | Harden the logins that stay public | Recorded |
 | [0030](0030-proxy-error-pages-in-place.md) | 2026-11-26 | Show the custom error pages in place for errors of the proxy | Recorded |
+| [0031](0031-probe-log-and-security-view.md) | 2026-11-26 | Show probing traffic with an own log and script instead of an analyser app | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 

@@ -11,3 +11,24 @@
     unique_id: cli_external_ip_address
     command: "curl -s https://api.ipify.org"
     scan_interval: 300
+
+- sensor:
+    name: Proxy probes today
+    unique_id: cli_proxy_probes_today
+    command: "python3 /config/scripts/probe_stats.py"
+    scan_interval: 300
+    command_timeout: 30
+    unit_of_measurement: "probes"
+    state_class: total_increasing
+    icon: mdi:shield-search
+    value_template: "{{ value_json.today }}"
+    json_attributes:
+      - last_24h
+      - addresses_24h
+      - hosts
+      - addresses
+      - paths
+      - recent
+      - bans
+      - banned
+      - updated
