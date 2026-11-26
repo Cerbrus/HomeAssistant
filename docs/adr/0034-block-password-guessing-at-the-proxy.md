@@ -23,7 +23,7 @@ Home Assistant bans an address after three failed logins ([ADR-0029](0029-harden
 
 - Home Assistant needs a login for the proxy's API. It is read from `secrets.yaml` (`npm_identity`, `npm_secret`) and is not in git. Without it, a block cannot be written and the "Security - Monitoring broken" automation reports that.
 - A blocked address gets a 403 on every public host name, not only on the one it guessed at.
-- Guarded are the host names with a login of their own: `requests`, `seerr`, `recipes`, `shopping` and `pokemon`. Home Assistant guards itself, and Plex signs in through plex.tv.
+- Guarded are the host names of the app with a password login of its own: `requests` and `seerr`. Home Assistant guards itself, Plex signs in through plex.tv, and the apps on the server Pi sign in with Google. Those apps answer 401 to a request with an ended session, so guarding them would block an own device outside the home without stopping any guessing.
 - An own device outside the home that keeps sending a wrong password blocks the address it is on. `shell_command.proxy_unblock` with the address lifts a block; the attempts before that moment are then ignored.
 - Every change to the list makes the proxy reload its configuration.
-- A new public proxy host gets the access list "Blocked"; a new app with its own login is added to the guarded host names in the script.
+- A new public proxy host gets the access list "Blocked"; a new app with its own password login is added to the guarded host names in the script.

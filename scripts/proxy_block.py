@@ -9,9 +9,7 @@ from proxy_common import ProxyError, cached_places, call, login, probes
 
 STATE = "/config/.proxy_blocks.json"
 ACCESS_LIST = "Blocked"
-GUARDED_HOSTS = {
-    f"{name}.cerbrus.nl" for name in ("requests", "seerr", "recipes", "shopping", "pokemon")
-}
+GUARDED_HOSTS = {f"{name}.cerbrus.nl" for name in ("requests", "seerr")}
 REFUSED = (401, 403)
 ATTEMPTS = 3
 WINDOW = timedelta(hours=1)
