@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from proxy_common import locations, probes
 
 IP_BANS = "/config/ip_bans.yaml"
-TOP = 6
+TOP = 5
 PATH_LENGTH = 60
 BAN_KEY = re.compile(r"^([0-9a-fA-F.:]+):\s*$")
 
