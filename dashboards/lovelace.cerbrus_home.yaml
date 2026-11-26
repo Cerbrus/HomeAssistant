@@ -1296,22 +1296,22 @@ config:
         heading: Latest probes
         icon: mdi:format-list-bulleted
       - type: markdown
-        content: <table width="100%"><tr><th align="left">Start</th><th align="right">Duration</th><th align="right">Requests</th><th
-          align="left">Address</th><th align="left" colspan="2">Country</th><th align="left">City</th><th align="left">Host
-          names</th><th align="left">Paths</th><th align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probes_today',
-          'recent') or [] %}<tr><td>{{ row.time }}</td><td align="right">{% if row.seconds >= 60 %}{{ row.seconds // 60 }}
-          min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td align="right">{{ row.count }}</td><td>{{
-          row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code |
-          upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td><td>{{ row.hosts | map('replace', '.cerbrus.nl',
-          '') | join(', ') }}{% if row.more_hosts %} +{{ row.more_hosts }}{% endif %}</td><td><code>{{ row.path | e }}</code>{%
-          if row.detail %} <abbr title="{% for request in row.detail %}{{ request.n }}× {{ request.p | e }} on {{ request.h
-          }} ({{ request.s }}){% if not loop.last %}; {% endif %}{% endfor %}{% if row.more %}; and {{ row.more }} more{%
-          endif %}">+{{ (row.detail | count) + row.more - 1 }}</abbr>{% endif %}</td><td align="right">{{ row.statuses | join(',
-          ') }}</td></tr>{% if row.detail %}<tr><td colspan="10"><details><summary>{{ (row.detail | count) + row.more }} different
-          requests in this burst</summary><table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th
-          align="right">Status</th><th align="right">Requests</th></tr>{% for request in row.detail %}<tr><td><code>{{ request.p
-          | e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-          endfor %}</table>{% if row.more %}and {{ row.more }} more{% endif %}</details></td></tr>{% endif %}{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
+        content: <table width="100%"><tr><th align="left">Start</th><th align="right">Duration</th><th align="left">Address</th><th
+          align="left" colspan="2">Country</th><th align="left">City</th><th align="left">Host names</th><th align="left">Paths</th><th
+          align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probes_today', 'recent') or [] %}<tr><td>{{
+          row.time }}</td><td align="right">{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{%
+          else %}{{ row.seconds }} s{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{
+          row.code }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city
+          }}</td><td>{{ row.hosts | map('replace', '.cerbrus.nl', '') | join(', ') }}{% if row.more_hosts %} +{{ row.more_hosts
+          }}{% endif %}</td><td><code>{{ row.path | e }}</code>{% if row.detail %} <abbr title="{% for request in row.detail
+          %}{{ request.n }}× {{ request.p | e }} on {{ request.h }} ({{ request.s }}){% if not loop.last %}; {% endif %}{%
+          endfor %}{% if row.more %}; and {{ row.more }} more{% endif %}">+{{ (row.detail | count) + row.more - 1 }}</abbr>{%
+          endif %}</td><td align="right">{{ row.statuses | join(', ') }}</td></tr>{% if row.detail %}<tr><td colspan="9"><details><summary>└
+          {{ row.count }} requests, {{ (row.detail | count) + row.more }} different</summary><table width="100%"><tr><th align="left">Path</th><th
+          align="left">Host name</th><th align="right">Status</th><th align="right">Requests</th></tr>{% for request in row.detail
+          %}<tr><td><code>{{ request.p | e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td
+          align="right">{{ request.n }}</td></tr>{% endfor %}</table>{% if row.more %}and {{ row.more }} more{% endif %}</details></td></tr>{%
+          elif row.count > 1 %}<tr><td colspan="9">└ {{ row.count }} identical requests</td></tr>{% endif %}{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
           endfor %}</table>
         grid_options:
           columns: full
