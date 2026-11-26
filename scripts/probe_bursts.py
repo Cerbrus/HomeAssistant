@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from proxy_common import cached_places, probes
 
 RECENT = 15
-PATH_LENGTH = 100
+PATH_LENGTH = 64
 BURST_GAP = 120
 BURST_HOSTS = 3
 DOMAIN = ".cerbrus.nl"
