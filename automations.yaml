@@ -696,3 +696,199 @@
   - alias: Restart Home Assistant so it forgets the ban
     action: homeassistant.restart
   mode: single
+- id: '1795652823362'
+  alias: Security - Address blocked at proxy
+  description: Notifies the phone when scripts/proxy_block.py blocks an address at
+    the proxy after three refused logins on a public app. The block lasts seven days;
+    shell_command.proxy_unblock lifts it earlier.
+  triggers:
+  - alias: The most recently blocked address changes
+    trigger: state
+    entity_id: sensor.proxy_blocked_addresses
+    attribute: last_blocked
+    not_to:
+    - ''
+    - null
+  conditions:
+  - alias: The sensor was already reporting before this change
+    condition: template
+    value_template: '{{ trigger.from_state is not none and trigger.from_state.state
+      not in [''unavailable'', ''unknown''] }}'
+  actions:
+  - alias: Notify which address was blocked
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Address blocked at proxy
+      message: '{% set block = (state_attr(''sensor.proxy_blocked_addresses'', ''blocked'')
+        or [{}]) | first %}{{ block.address }}{% if block.country %} ({{ block.country
+        }}){% endif %} was refused {{ block.attempts }} logins on {{ block.host }}
+        and is blocked for seven days.'
+      data:
+        push:
+          interruption-level: time-sensitive
+        url: /cerbrus-home/security
+  mode: queued
+- id: '1795652823793'
+  alias: Security - Unusual probing volume
+  description: 'Notifies the phone when probing goes far beyond the usual sweeps:
+    one address with more than 1000 refused requests in 24 hours, or more than 2000
+    refused requests in total within an hour. Informs only.'
+  triggers:
+  - alias: One address passes 1000 refused requests in 24 hours
+    trigger: numeric_state
+    entity_id: sensor.proxy_probes_today
+    attribute: top_address_count
+    above: 1000
+    id: address
+  - alias: The last hour passes 2000 refused requests
+    trigger: numeric_state
+    entity_id: sensor.proxy_probes_today
+    attribute: last_hour
+    above: 2000
+    id: hour
+  conditions:
+  - alias: The sensor was already reporting before this change
+    condition: template
+    value_template: '{{ trigger.from_state is not none and trigger.from_state.state
+      not in [''unavailable'', ''unknown''] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: address
+      sequence:
+      - alias: Notify about the persistent address
+        action: notify.mobile_app_iphone_michiel
+        data:
+          title: Persistent visitor
+          message: '{% set top = (state_attr(''sensor.proxy_probes_today'', ''addresses'')
+            or [{}]) | first %}{{ top.name }}{% if top.country %} ({{ top.country
+            }}){% endif %} got {{ top.count }} requests refused in the last 24 hours.'
+          data:
+            url: /cerbrus-home/security
+    default:
+    - alias: Notify about the volume in the last hour
+      action: notify.mobile_app_iphone_michiel
+      data:
+        title: Unusual probing volume
+        message: '{{ state_attr(''sensor.proxy_probes_today'', ''last_hour'') }} requests
+          from outside were refused in the last hour.'
+        data:
+          url: /cerbrus-home/security
+  mode: single
+- id: '1795652838669'
+  alias: Security - Monitoring broken
+  description: 'Notifies the phone when the probe monitoring itself stops working:
+    the probes sensor is unavailable or stale, a whole day passed without a single
+    probe, a block could not be written to the proxy, or the block and certificate
+    sensors stay unavailable. Without this, a broken chain looks like a quiet day.'
+  triggers:
+  - alias: The probes sensor is unavailable for 30 minutes
+    trigger: state
+    entity_id: sensor.proxy_probes_today
+    to:
+    - unavailable
+    - unknown
+    for:
+      minutes: 30
+    id: probes_unavailable
+  - alias: The probes sensor has not updated for 30 minutes
+    trigger: state
+    entity_id: sensor.proxy_probes_today
+    attribute: updated
+    for:
+      minutes: 30
+    id: probes_stale
+  - alias: End of the day
+    trigger: time
+    at: '23:55:00'
+    id: no_probes
+  - alias: A block could not be written to the proxy for five minutes
+    trigger: state
+    entity_id: sensor.proxy_blocked_addresses
+    attribute: error
+    not_to:
+    - ''
+    - null
+    for:
+      minutes: 5
+    id: block_failed
+  - alias: The blocked addresses sensor is unavailable for 30 minutes
+    trigger: state
+    entity_id: sensor.proxy_blocked_addresses
+    to:
+    - unavailable
+    - unknown
+    for:
+      minutes: 30
+    id: blocker_unavailable
+  - alias: The certificate sensor is unavailable for 26 hours
+    trigger: state
+    entity_id: sensor.proxy_certificate_days_left
+    to:
+    - unavailable
+    - unknown
+    for:
+      hours: 26
+    id: certificates_unavailable
+  conditions:
+  - alias: At the end of the day only when no probe was counted
+    condition: or
+    conditions:
+    - condition: not
+      conditions:
+      - condition: trigger
+        id: no_probes
+    - condition: numeric_state
+      entity_id: sensor.proxy_probes_today
+      below: 1
+  actions:
+  - alias: Pick the message for what broke
+    variables:
+      messages:
+        probes_unavailable: The probes sensor has been unavailable for 30 minutes.
+        probes_stale: The probes sensor has not updated for 30 minutes.
+        no_probes: Not a single probe was counted today. The probe log is probably
+          not being written.
+        block_failed: 'An address could not be blocked at the proxy: {{ state_attr(''sensor.proxy_blocked_addresses'',
+          ''error'') }}'
+        blocker_unavailable: The blocked addresses sensor has been unavailable for
+          30 minutes.
+        certificates_unavailable: The certificate check has not worked for 26 hours.
+  - alias: Notify what broke
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Security monitoring broken
+      message: '{{ messages[trigger.id] }}'
+      data:
+        url: /cerbrus-home/security
+  mode: queued
+- id: '1795652839109'
+  alias: Notifications - Certificate expiring
+  description: Notifies the phone every morning while a certificate that the proxy
+    serves has 14 days or less left. The proxy renews at about 30 days, so this means
+    the renewal keeps failing. Every host sends HSTS, so an expired certificate makes
+    its host unreachable.
+  triggers:
+  - alias: Every day at 10:00
+    trigger: time
+    at: '10:00:00'
+  conditions:
+  - alias: The soonest certificate has 14 days or less left
+    condition: numeric_state
+    entity_id: sensor.proxy_certificate_days_left
+    below: 15
+  actions:
+  - alias: Notify which certificate is expiring
+    action: notify.mobile_app_iphone_michiel
+    data:
+      title: Certificate expiring
+      message: '{% set days = states(''sensor.proxy_certificate_days_left'') | int(0)
+        %}{% if days < 0 %}The certificate of {{ state_attr(''sensor.proxy_certificate_days_left'',
+        ''host'') }} could not be read.{% else %}The certificate of {{ state_attr(''sensor.proxy_certificate_days_left'',
+        ''host'') }} has {{ days }} days left and was not renewed.{% endif %}'
+      data:
+        push:
+          interruption-level: time-sensitive
+        url: /cerbrus-home/security
+  mode: single
