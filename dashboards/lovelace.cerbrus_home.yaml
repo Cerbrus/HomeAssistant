@@ -1228,6 +1228,12 @@ config:
         - bans
         grid_options:
           columns: 6
+        tap_action:
+          action: none
+        icon_tap_action:
+          action: none
+        hold_action:
+          action: none
       - type: markdown
         content: '**{{ state_attr(''sensor.proxy_probes_today'', ''last_24h'') | default(0, true) }}** requests from **{{
           state_attr(''sensor.proxy_probes_today'', ''addresses_24h'') | default(0, true) }}** outside addresses were refused
