@@ -40,6 +40,15 @@ Two files in the `nginx/custom` folder of the proxy's configuration are not mana
 
 `scripts/probe_stats.py` reads the log from `https://proxy.cerbrus.nl/__probes` and condenses it into `sensor.proxy_probes_today`, which feeds the Security view ([dashboards.md](dashboards.md), [ADR-0031](adr/0031-probe-log-and-security-view.md)). It looks up the country and city of the addresses it shows at ip-api.com and caches the answers for 30 days ([ADR-0033](adr/0033-locate-probing-addresses-online.md)). The count is an indication, not a verdict: an own device outside the home that gets a 401 or 404 is counted too. Requests that match no proxy host are not in the log.
 
+### Blocking and certificates
+
+Two more scripts talk to the proxy's API, with the login in `secrets.yaml` (`npm_identity`, `npm_secret`). `scripts/proxy_common.py` holds what the proxy scripts share.
+
+- `scripts/proxy_block.py` keeps the access list "Blocked" (deny entries, then allow all), which is set on every public proxy host. It adds an address after three refused logins within an hour and removes it after seven days ([ADR-0034](adr/0034-block-password-guessing-at-the-proxy.md)). Its own record is `.proxy_blocks.json` in the configuration folder, not in git.
+- `scripts/proxy_certificates.py` reads the certificate that every enabled host name serves ([ADR-0035](adr/0035-check-the-certificates-that-are-served.md)).
+
+A new public proxy host gets the access list "Blocked", an admin-only one "LAN only" ([ADR-0028](adr/0028-media-admin-apps-lan-only.md)).
+
 To change a snippet: write the file inside the app's container, run `nginx -t`, then `nginx -s reload`.
 
 ## Configuration and maintenance

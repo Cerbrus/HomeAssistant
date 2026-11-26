@@ -19,6 +19,10 @@ All automations are created in the UI and stored in `automations.yaml`.
 | Notifications - Doorbell not charging or battery low | Doorbell battery below 30 %; doorbell not charging for 24 hours | | Notifies the phone with the battery level |
 | Notifications - Address banned | The "Too many login attempts" notification (`ip-ban`) is created or replaced | | Time-sensitive notification on the phone with the banned address |
 | Security - Lift ban on trusted network | The "Too many login attempts" notification (`ip-ban`) is created or replaced | The banned address starts with the value of `input_text.login_notification_trusted_prefix` | Runs `shell_command.unban_address` for that address, notifies the phone, dismisses the notification and restarts Home Assistant ([ADR-0032](adr/0032-lift-bans-on-the-home-network.md)) |
+| Security - Address blocked at proxy | The most recently blocked address in `sensor.proxy_blocked_addresses` changes | | Time-sensitive notification with the address, its country, the host name and the number of refused logins ([ADR-0034](adr/0034-block-password-guessing-at-the-proxy.md)) |
+| Security - Unusual probing volume | One address passes 1000 refused requests in 24 hours; the last hour passes 2000 refused requests | | Notifies the phone. Informs only |
+| Security - Monitoring broken | The probes sensor unavailable or not updated for 30 minutes; 23:55; a block that cannot be written for five minutes; the blocked addresses sensor unavailable for 30 minutes; the certificate sensor unavailable for 26 hours | At 23:55 only when no probe was counted that day | Notifies the phone what broke |
+| Notifications - Certificate expiring | 10:00 | The soonest certificate has 14 days or less left | Time-sensitive notification with the host names and the days left ([ADR-0035](adr/0035-check-the-certificates-that-are-served.md)) |
 | Notifications - Updates pending | 10:00 | It is Saturday and at least one update is waiting | Notifies the phone how many updates wait and which; tapping it opens the updates page |
 | Notifications - Waste pickup tomorrow | 19:00 | A Twente Milieu pickup date is tomorrow | Notifies the phone which bins go out |
 | Media - Remove fake downloads | Every minute | | Runs `shell_command.arr_guard`; writes a logbook entry when something was removed |
@@ -39,6 +43,8 @@ Notes:
 - An unreachable freezer socket is not treated as a power loss. The Tuya devices can lose their address after a DHCP renewal ([ADR-0017](adr/0017-tuya-dynamic-leases-until-new-modem.md)), and the socket keeps its power then.
 - The doorbell runs on a battery that the doorbell wire keeps full. The 24 hour "not charging" timer starts again after a Home Assistant restart or a moment of the doorbell being unavailable, so the battery threshold is the alert that always comes.
 - Home Assistant bans an address after three failed logins ([ADR-0029](adr/0029-harden-public-logins.md)). The ban notification goes to the phone because a ban can hit an own device; how to lift one is in [architecture.md](architecture.md#hardening).
+- The thresholds of the volume notification are first estimates: a normal day has about 2200 refused requests from about 120 addresses, and the busiest address about 400.
+- A day without a single probe means the probe log is not being written, not that nobody knocked.
 - The updates notification only reports. Nothing is installed automatically.
 - Home Assistant has no setting to leave addresses out of the "Login attempt failed" notification, so the dismiss automation removes it afterwards. The warning from `homeassistant.components.http.ban` stays in the log. The trusted prefix is IPv4 only and lives in a UI helper, which keeps the address out of this repository.
 
@@ -62,6 +68,8 @@ Notes:
 | `sensor.cpu_temperature` | `_yaml/command_line.yaml` | CPU temperature of the Pi |
 | `sensor.external_ip_address` | `_yaml/command_line.yaml` | Public address, refreshed every five minutes |
 | `sensor.proxy_probes_today` | `_yaml/command_line.yaml` | Requests from outside addresses that the proxy answered with a 4xx status today, from `scripts/probe_stats.py` every five minutes. Attributes: the last 24 hours in total, per host name, per address, per path and per country, the last 15 bursts of requests per address, each address with its country and city, and the banned addresses ([ADR-0031](adr/0031-probe-log-and-security-view.md)) |
+| `sensor.proxy_blocked_addresses` | `_yaml/command_line.yaml` | Number of addresses blocked at the proxy, from `scripts/proxy_block.py` every minute. Attributes: the blocked addresses with host name and end of the block, and the error when a block could not be written |
+| `sensor.proxy_certificate_days_left` | `_yaml/command_line.yaml` | Days left on the soonest expiring certificate that the proxy serves, from `scripts/proxy_certificates.py` once a day. Attributes: its host names, and all certificates with their days left |
 | `input_number.zero_value` | `_yaml/input_number.yaml` | Constant zero for dashboard cards |
 | `input_text.login_notification_trusted_prefix` | UI helper | Start of the addresses whose failed login notification is dismissed and whose ban is lifted automatically |
 | `input_number.energy_price_electricity_purchase_fee`, `input_number.energy_price_gas_purchase_fee` | UI helpers | The supplier's purchase fee per kWh and per m³, including VAT |

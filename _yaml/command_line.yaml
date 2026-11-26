@@ -23,7 +23,9 @@
     icon: mdi:shield-search
     value_template: "{{ value_json.today }}"
     json_attributes:
+      - last_hour
       - last_24h
+      - top_address_count
       - addresses_24h
       - hosts
       - addresses
@@ -32,4 +34,33 @@
       - recent
       - bans
       - banned
+      - updated
+
+- sensor:
+    name: Proxy blocked addresses
+    unique_id: cli_proxy_blocked_addresses
+    command: "python3 /config/scripts/proxy_block.py"
+    scan_interval: 60
+    command_timeout: 45
+    unit_of_measurement: "addresses"
+    icon: mdi:shield-off
+    value_template: "{{ value_json.count }}"
+    json_attributes:
+      - blocked
+      - last_blocked
+      - error
+      - updated
+
+- sensor:
+    name: Proxy certificate days left
+    unique_id: cli_proxy_certificate_days_left
+    command: "python3 /config/scripts/proxy_certificates.py"
+    scan_interval: 86400
+    command_timeout: 300
+    unit_of_measurement: "d"
+    icon: mdi:certificate
+    value_template: "{{ value_json.days }}"
+    json_attributes:
+      - host
+      - certificates
       - updated

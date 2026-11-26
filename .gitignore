@@ -52,3 +52,4 @@ backups/
 
 # Probe statistics
 .probe_geo_cache.json
+.proxy_blocks.json

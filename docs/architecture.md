@@ -60,6 +60,8 @@ Decided in [ADR-0029](adr/0029-harden-public-logins.md):
 - A request that matches no proxy host (the bare domain, a request by address) is redirected to `https://error.cerbrus.nl/404`. Unknown subdomains are redirected to the 404 page as well.
 - Home Assistant bans an address after three failed logins. The setting is `login_attempts_threshold` under **Settings > System > Network**; it is UI-managed and not in `configuration.yaml`. Bans are written to `ip_bans.yaml` in the configuration folder; to lift one, remove the entry over SSH and restart Home Assistant. A ban on an address of the home network is lifted that way automatically ([ADR-0032](adr/0032-lift-bans-on-the-home-network.md)).
 - The Home Assistant account that logs in from outside uses an authenticator app as second factor.
+- An outside address that gets three logins refused on another public app is blocked at the proxy for seven days ([ADR-0034](adr/0034-block-password-guessing-at-the-proxy.md)).
+- The certificates that the proxy serves are checked daily; 14 days before one expires the phone is notified ([ADR-0035](adr/0035-check-the-certificates-that-are-served.md)).
 
 ## Deployment
 

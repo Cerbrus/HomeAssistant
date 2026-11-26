@@ -1312,19 +1312,60 @@ config:
         heading: Bans
         icon: mdi:account-cancel
       - type: markdown
-        content: '{% set banned = state_attr(''sensor.proxy_probes_today'', ''banned'') or [] %}{% if banned %}Banned after
-          three failed logins:
+        content: '{% set banned = state_attr(''sensor.proxy_probes_today'', ''banned'') or [] %}**Home Assistant** bans after
+          three failed logins.
 
-          {% for address in banned %}
+          {% if banned %}{% for address in banned %}
 
-          - {{ address }}{% endfor %}{% else %}No address is banned.{% endif %}'
+          - {{ address }}{% endfor %}{% else %}
+
+          No address is banned.{% endif %}'
+        grid_options:
+          columns: full
+      - type: markdown
+        content: '{% set blocked = state_attr(''sensor.proxy_blocked_addresses'', ''blocked'') or [] %}**The proxy** blocks
+          for seven days after three refused logins on a public app.
+
+          {% if blocked %}
+
+          <table width="100%"><tr><th align="left" colspan="2">Address</th><th align="left">Host name</th><th align="left">Until</th></tr>{%
+          for row in blocked %}<tr><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
+          | upper }}">{% endif %}</td><td>{{ row.address }}</td><td>{{ row.host | replace(''.cerbrus.nl'', '''') }}</td><td>{{
+          as_timestamp(row.until) | timestamp_custom(''%d-%m %H:%M'') }}</td></tr>{% endfor %}</table>{% else %}
+
+          No address is blocked.{% endif %}{% if state_attr(''sensor.proxy_blocked_addresses'', ''error'') %}
+
+
+          **Blocking fails:** {{ state_attr(''sensor.proxy_blocked_addresses'', ''error'') }}{% endif %}'
         grid_options:
           columns: full
       - type: logbook
-        title: Ban notifications
+        title: Ban and block notifications
         target:
           entity_id:
           - automation.notifications_address_banned
+          - automation.security_address_blocked_at_proxy
+          - automation.security_lift_ban_on_trusted_network
         hours_to_show: 720
+        grid_options:
+          columns: full
+    - type: grid
+      cards:
+      - type: heading
+        heading: Certificates
+        icon: mdi:certificate
+      - type: tile
+        entity: sensor.proxy_certificate_days_left
+        name: Soonest expiry
+        state_content:
+        - state
+        - host
+        grid_options:
+          columns: full
+      - type: markdown
+        content: <table width="100%"><tr><th align="left">Host names</th><th align="right">Days left</th><th align="right">Until</th></tr>{%
+          for row in state_attr('sensor.proxy_certificate_days_left', 'certificates') or [] %}<tr><td>{{ row.names }}</td><td
+          align="right">{% if row.days < 0 %}unreadable{% else %}{{ row.days }}{% endif %}</td><td align="right">{{ row.until
+          }}</td></tr>{% else %}<tr><td>Not checked yet</td><td></td><td></td></tr>{% endfor %}</table>
         grid_options:
           columns: full

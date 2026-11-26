@@ -6,10 +6,10 @@ import urllib.request
 from collections import Counter
 from datetime import datetime, timedelta
 
-PROBE_LOG = "https://proxy.cerbrus.nl/__probes"
+from proxy_common import GEO_CACHE, probes
+
 IP_BANS = "/config/ip_bans.yaml"
 GEO_LOOKUP = "http://ip-api.com/batch?fields=status,country,countryCode,city,query"
-GEO_CACHE = "/config/.probe_geo_cache.json"
 GEO_BATCH = 100
 GEO_DAYS = 30
 TIMEOUT = 20
@@ -22,18 +22,6 @@ BURST_DETAILS = 10
 ATTRIBUTE_BYTES = 14000
 DOMAIN = ".cerbrus.nl"
 BAN_KEY = re.compile(r"^([0-9a-fA-F.:]+):\s*$")
-
-
-def probes():
-    with urllib.request.urlopen(PROBE_LOG, timeout=TIMEOUT) as response:
-        lines = response.read().decode("utf-8", "replace").splitlines()
-    for line in lines:
-        try:
-            probe = json.loads(line)
-            probe["at"] = datetime.fromisoformat(probe["t"])
-        except (ValueError, KeyError):
-            continue
-        yield probe
 
 
 def bans():
@@ -164,10 +152,13 @@ def main():
     day_ago = now - timedelta(hours=24)
 
     today = 0
+    last_hour = 0
     last_day = []
     for probe in probes():
         if probe["at"] >= midnight:
             today += 1
+        if probe["at"] >= now - timedelta(hours=1):
+            last_hour += 1
         if probe["at"] >= day_ago:
             last_day.append(probe)
 
@@ -186,7 +177,9 @@ def main():
             break
     print(json.dumps({
         "today": today,
+        "last_hour": last_hour,
         "last_24h": len(last_day),
+        "top_address_count": addresses[0]["count"] if addresses else 0,
         "addresses_24h": len({probe["a"] for probe in last_day}),
         "hosts": top(Counter(probe["h"] for probe in last_day)),
         "addresses": [located(row, row["name"], places) for row in addresses],

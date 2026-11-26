@@ -22,4 +22,5 @@ Loose ends that are known and not yet handled. Remove an item when it is handled
 
 ## Network
 
+- **Proxy login for Home Assistant**: `npm_identity` and `npm_secret` are not in `secrets.yaml` yet. Until they are, addresses cannot be blocked at the proxy and the certificate check does not run ([ADR-0034](adr/0034-block-password-guessing-at-the-proxy.md)).
 - **Tuya address reservations** wait for the new modem ([ADR-0017](adr/0017-tuya-dynamic-leases-until-new-modem.md)).
