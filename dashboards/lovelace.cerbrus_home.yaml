@@ -59,6 +59,35 @@ config:
       - condition: template
         value_template: '{{ states(''sensor.twente_milieu_non_recyclable_waste_pickup'') in [now().date() | string, (now().date()
           + timedelta(days=1)) | string] }}'
+    - type: entity
+      entity: sensor.proxy_certificate_days_left
+      name: Certificate
+      show_name: true
+      icon: mdi:certificate
+      color: green
+      tap_action:
+        action: navigate
+        navigation_path: /cerbrus-home/security
+      visibility:
+      - condition: numeric_state
+        entity: sensor.proxy_certificate_days_left
+        above: 14
+    - type: entity
+      entity: sensor.proxy_certificate_days_left
+      name: Certificate expiring
+      show_name: true
+      icon: mdi:certificate
+      color: red
+      state_content:
+      - state
+      - host
+      tap_action:
+        action: navigate
+        navigation_path: /cerbrus-home/security
+      visibility:
+      - condition: numeric_state
+        entity: sensor.proxy_certificate_days_left
+        below: 15
     sections:
     - type: grid
       cards:
