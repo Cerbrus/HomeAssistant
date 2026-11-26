@@ -71,7 +71,7 @@ def lookup(addresses):
 
 def locations(addresses, now):
     cache = cached_locations(now)
-    unknown = sorted(set(addresses) - set(cache))
+    unknown = [address for address in dict.fromkeys(addresses) if address not in cache]
     if unknown:
         try:
             for place in lookup(unknown):
@@ -96,6 +96,20 @@ def located(row, address, places):
         "code": place.get("code", ""),
         "city": place.get("city", ""),
     }
+
+
+def countries(probes, places):
+    counts = Counter()
+    addresses = {}
+    for probe in probes:
+        place = places.get(probe["a"], {})
+        key = (place.get("country") or "Unknown", place.get("code", ""))
+        counts[key] += 1
+        addresses.setdefault(key, set()).add(probe["a"])
+    return [
+        {"name": name, "code": code, "addresses": len(addresses[(name, code)]), "count": count}
+        for (name, code), count in counts.most_common(TOP)
+    ]
 
 
 def bursts(probes):
@@ -161,7 +175,10 @@ def main():
     addresses = top(Counter(probe["a"] for probe in last_day))
     recent = bursts(last_day)[:RECENT]
     places = locations(
-        [row["name"] for row in addresses] + [burst["address"] for burst in recent], now
+        [row["name"] for row in addresses]
+        + [burst["address"] for burst in recent]
+        + [probe["a"] for probe in last_day],
+        now,
     )
     for limit in range(BURST_DETAILS, -1, -1):
         rows = [located(summary(burst, limit), burst["address"], places) for burst in recent]
@@ -173,6 +190,7 @@ def main():
         "addresses_24h": len({probe["a"] for probe in last_day}),
         "hosts": top(Counter(probe["h"] for probe in last_day)),
         "addresses": [located(row, row["name"], places) for row in addresses],
+        "countries": countries(last_day, places),
         "paths": top(Counter(probe["p"][:PATH_LENGTH] for probe in last_day)),
         "recent": rows,
         "bans": len(banned),

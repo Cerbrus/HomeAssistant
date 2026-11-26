@@ -1275,6 +1275,14 @@ config:
           %}<tr><td>None</td><td></td></tr>{% endfor %}</table>
         grid_options:
           columns: 12
+      - type: markdown
+        content: <table width="100%"><tr><th align="left" colspan="2">Country</th><th align="right">Addresses</th><th align="right">Probes</th></tr>{%
+          for row in state_attr('sensor.proxy_probes_today', 'countries') or [] %}<tr><td>{% if row.code %}<img src="/local/flags/{{
+          row.code }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.name }}</td><td align="right">{{
+          row.addresses }}</td><td align="right">{{ row.count }}</td></tr>{% else %}<tr><td></td><td>None</td><td></td><td></td></tr>{%
+          endfor %}</table>
+        grid_options:
+          columns: 12
     - type: grid
       column_span: 2
       cards:

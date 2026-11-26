@@ -19,7 +19,7 @@ The Security view lists the addresses that probe the public host names ([ADR-003
 
 ## Consequences
 
-- The addresses of probing visitors are sent to ip-api.com, over plain HTTP, and that service sees the home's public address asking. Only addresses that appear on the view and are not in the cache are looked up.
+- The addresses of probing visitors are sent to ip-api.com, over plain HTTP, and that service sees the home's public address asking. Every address of the last 24 hours that is not in the cache is looked up, at most 100 per run.
 - When the service does not answer, new addresses show without a location; everything else keeps working.
 - The location is where the address is registered, which for scanners is usually a data centre and says little about who is behind it.
 - The cache file `.probe_geo_cache.json` is not in git.

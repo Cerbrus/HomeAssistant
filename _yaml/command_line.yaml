@@ -27,6 +27,7 @@
       - addresses_24h
       - hosts
       - addresses
+      - countries
       - paths
       - recent
       - bans
