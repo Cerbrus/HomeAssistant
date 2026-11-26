@@ -1325,16 +1325,17 @@ config:
         heading: Latest probes
         icon: mdi:format-list-bulleted
       - type: markdown
-        content: <table width="100%"><tr><th align="left">Start</th><th align="right">Duration</th><th align="left">Address</th><th
-          align="left" colspan="2">Country</th><th align="left">City</th><th align="left">Host names</th><th align="left">Paths</th><th
-          align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probes_today', 'recent') or [] %}<tr><td>{{
-          row.time }}</td><td align="right">{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{%
-          else %}{{ row.seconds }} s{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{
-          row.code }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city
-          }}</td><td>{{ row.hosts | map('replace', '.cerbrus.nl', '') | join(', ') }}{% if row.more_hosts %} +{{ row.more_hosts
-          }}{% endif %}</td><td><a href="#burst-{{ loop.index0 }}"><code>{{ row.path | e }}</code>{% if row.detail %} +{{
-          (row.detail | count) + row.more - 1 }}{% endif %}</a></td><td align="right">{{ row.statuses | join(', ') }}</td></tr>{%
-          else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{% endfor %}</table>
+        content: <table width="100%"><tr><th align="left">Start</th><th align="right">Duration</th><th align="right">Requests</th><th
+          align="left">Address</th><th align="left" colspan="2">Country</th><th align="left">City</th><th align="left">Host
+          names</th><th align="left">Paths</th><th align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probe_bursts',
+          'bursts') or [] %}<tr><td>{{ row.time }}</td><td align="right">{% if row.seconds >= 60 %}{{ row.seconds // 60 }}
+          min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td align="right">{{ row.count }}</td><td>{{
+          row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code |
+          upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td><td>{{ row.hosts | join(', ') }}{% if
+          row.more_hosts %} +{{ row.more_hosts }}{% endif %}</td><td>{% if row.requests %}<a href="#burst-{{ loop.index0 }}"><code>{{
+          row.path | e }}</code> +{{ row.unique - 1 }}</a>{% else %}<code>{{ row.path | e }}</code>{% endif %}</td><td align="right">{{
+          row.statuses | join(', ') }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
+          endfor %}</table>
         grid_options:
           columns: full
     - type: grid
@@ -1409,7 +1410,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 0 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 0 %}{%
             set row = rows[0] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1417,19 +1418,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-1'
@@ -1437,7 +1434,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 1 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 1 %}{%
             set row = rows[1] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1445,19 +1442,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-2'
@@ -1465,7 +1458,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 2 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 2 %}{%
             set row = rows[2] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1473,19 +1466,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-3'
@@ -1493,7 +1482,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 3 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 3 %}{%
             set row = rows[3] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1501,19 +1490,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-4'
@@ -1521,7 +1506,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 4 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 4 %}{%
             set row = rows[4] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1529,19 +1514,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-5'
@@ -1549,7 +1530,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 5 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 5 %}{%
             set row = rows[5] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1557,19 +1538,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-6'
@@ -1577,7 +1554,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 6 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 6 %}{%
             set row = rows[6] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1585,19 +1562,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-7'
@@ -1605,7 +1578,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 7 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 7 %}{%
             set row = rows[7] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1613,19 +1586,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-8'
@@ -1633,7 +1602,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 8 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 8 %}{%
             set row = rows[8] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1641,19 +1610,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-9'
@@ -1661,7 +1626,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 9 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 9 %}{%
             set row = rows[9] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1669,19 +1634,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-10'
@@ -1689,7 +1650,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 10 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 10 %}{%
             set row = rows[10] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1697,19 +1658,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-11'
@@ -1717,7 +1674,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 11 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 11 %}{%
             set row = rows[11] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1725,19 +1682,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-12'
@@ -1745,7 +1698,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 12 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 12 %}{%
             set row = rows[12] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1753,19 +1706,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-13'
@@ -1773,7 +1722,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 13 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 13 %}{%
             set row = rows[13] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1781,19 +1730,15 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'
       - type: custom:bubble-card
         card_type: pop-up
         hash: '#burst-14'
@@ -1801,7 +1746,7 @@ config:
         icon: mdi:shield-search
         cards:
         - type: markdown
-          content: '{% set rows = state_attr(''sensor.proxy_probes_today'', ''recent'') or [] %}{% if rows | count > 14 %}{%
+          content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 14 %}{%
             set row = rows[14] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
             align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
             >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
@@ -1809,16 +1754,12 @@ config:
             | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
-            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ ((row.detail | count) + row.more)
-            if row.detail else 1 }} unique**
+            **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
 
 
             <table width="100%"><tr><th align="left">Path</th><th align="left">Host name</th><th align="right">Status</th><th
-            align="right">Requests</th></tr>{% if row.detail %}{% for request in row.detail %}<tr><td><code>{{ request.p |
-            e }}</code></td><td>{{ request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{%
-            endfor %}{% else %}<tr><td><code>{{ row.path | e }}</code></td><td>{{ row.hosts | map(''replace'', ''.cerbrus.nl'',
-            '''') | join('', '') }}</td><td align="right">{{ row.statuses | join('', '') }}</td><td align="right">{{ row.count
-            }}</td></tr>{% endif %}</table>{% if row.more %}
-
-
-            and {{ row.more }} more{% endif %}{% else %}There is no burst in this position any more.{% endif %}'
+            align="right">Requests</th></tr>{% for request in row.requests %}<tr><td><code>{{ request.p | e }}</code></td><td>{{
+            request.h }}</td><td align="right">{{ request.s }}</td><td align="right">{{ request.n }}</td></tr>{% else %}<tr><td><code>{{
+            row.path | e }}</code></td><td>{{ row.hosts | join('', '') }}</td><td align="right">{{ row.statuses | join('',
+            '') }}</td><td align="right">{{ row.count }}</td></tr>{% endfor %}</table>{% else %}There is no burst in this
+            position any more.{% endif %}'

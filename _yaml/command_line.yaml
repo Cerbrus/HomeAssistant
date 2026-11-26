@@ -31,7 +31,6 @@
       - addresses
       - countries
       - paths
-      - recent
       - bans
       - banned
       - updated
@@ -63,4 +62,17 @@
     json_attributes:
       - host
       - certificates
+      - updated
+
+- sensor:
+    name: Proxy probe bursts
+    unique_id: cli_proxy_probe_bursts
+    command: "python3 /config/scripts/probe_bursts.py"
+    scan_interval: 300
+    command_timeout: 30
+    unit_of_measurement: "bursts"
+    icon: mdi:shield-search
+    value_template: "{{ value_json.count }}"
+    json_attributes:
+      - bursts
       - updated

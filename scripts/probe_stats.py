@@ -14,13 +14,7 @@ GEO_BATCH = 100
 GEO_DAYS = 30
 TIMEOUT = 20
 TOP = 6
-RECENT = 15
 PATH_LENGTH = 60
-BURST_GAP = 120
-BURST_HOSTS = 3
-BURST_DETAILS = 20
-ATTRIBUTE_BYTES = 14000
-DOMAIN = ".cerbrus.nl"
 BAN_KEY = re.compile(r"^([0-9a-fA-F.:]+):\s*$")
 
 
@@ -100,52 +94,6 @@ def countries(probes, places):
     ]
 
 
-def bursts(probes):
-    found = []
-    current = {}
-    for probe in sorted(probes, key=lambda probe: probe["at"]):
-        burst = current.get(probe["a"])
-        if not burst or (probe["at"] - burst["end"]).total_seconds() > BURST_GAP:
-            burst = current[probe["a"]] = {"address": probe["a"], "start": probe["at"], "probes": []}
-            found.append(burst)
-        burst["end"] = probe["at"]
-        burst["probes"].append(probe)
-    return sorted(found, key=lambda burst: burst["start"], reverse=True)
-
-
-def details(probes, limit):
-    requests = Counter(
-        (probe["p"][:PATH_LENGTH], probe["h"].removesuffix(DOMAIN), probe["s"])
-        for probe in probes
-    )
-    if len(requests) < 2:
-        return [], 0
-    return [
-        {"p": path, "h": host, "s": status, "n": count}
-        for (path, host, status), count in requests.most_common(limit)
-    ], max(len(requests) - limit, 0)
-
-
-def summary(burst, limit):
-    probes = burst["probes"]
-    hosts = [name for name, _ in Counter(probe["h"] for probe in probes).most_common()]
-    paths = Counter(probe["p"][:PATH_LENGTH] for probe in probes)
-    detail, more = details(probes, limit)
-    return {
-        "detail": detail,
-        "more": more,
-        "time": burst["start"].strftime("%d-%m %H:%M:%S"),
-        "seconds": round((burst["end"] - burst["start"]).total_seconds()),
-        "count": len(probes),
-        "address": burst["address"],
-        "hosts": hosts[:BURST_HOSTS],
-        "more_hosts": max(len(hosts) - BURST_HOSTS, 0),
-        "path": paths.most_common(1)[0][0],
-        "paths": len(paths),
-        "statuses": sorted({probe["s"] for probe in probes}),
-    }
-
-
 def main():
     now = datetime.now().astimezone()
     midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -164,17 +112,9 @@ def main():
 
     banned = bans()
     addresses = top(Counter(probe["a"] for probe in last_day))
-    recent = bursts(last_day)[:RECENT]
     places = locations(
-        [row["name"] for row in addresses]
-        + [burst["address"] for burst in recent]
-        + [probe["a"] for probe in last_day],
-        now,
+        [row["name"] for row in addresses] + [probe["a"] for probe in last_day[::-1]], now
     )
-    for limit in range(BURST_DETAILS, -1, -1):
-        rows = [located(summary(burst, limit), burst["address"], places) for burst in recent]
-        if len(json.dumps(rows)) < ATTRIBUTE_BYTES:
-            break
     print(json.dumps({
         "today": today,
         "last_hour": last_hour,
@@ -185,7 +125,6 @@ def main():
         "addresses": [located(row, row["name"], places) for row in addresses],
         "countries": countries(last_day, places),
         "paths": top(Counter(probe["p"][:PATH_LENGTH] for probe in last_day)),
-        "recent": rows,
         "bans": len(banned),
         "banned": banned,
         "updated": now.isoformat(timespec="seconds"),

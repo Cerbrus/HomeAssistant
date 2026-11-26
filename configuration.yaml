@@ -14,6 +14,7 @@ climate: !include _yaml/climate.yaml
 command_line: !include _yaml/command_line.yaml
 input_number: !include _yaml/input_number.yaml
 light: !include _yaml/light.yaml
+recorder: !include _yaml/recorder.yaml
 panel_custom: !include _yaml/panel_custom.yaml
 scene: !include _yaml/scenes.yaml
 shell_command: !include _yaml/shell_command.yaml

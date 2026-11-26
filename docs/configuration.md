@@ -21,10 +21,11 @@
 | File | Purpose |
 | --- | --- |
 | `_yaml/climate.yaml` | Generic thermostat that drives the Pi's cooling fan |
-| `_yaml/command_line.yaml` | CPU temperature sensor, external IP address sensor, and the proxy sensors: probes, blocked addresses, certificate days left |
+| `_yaml/command_line.yaml` | CPU temperature sensor, external IP address sensor, and the proxy sensors: probes, probe bursts, blocked addresses, certificate days left |
 | `_yaml/input_number.yaml` | `input_number.zero_value`, a constant for dashboard cards |
 | `_yaml/light.yaml` | KlikAanKlikUit lights through the ICS-2000 hub |
 | `_yaml/panel_custom.yaml` | Sidebar shortcuts into settings pages |
+| `_yaml/recorder.yaml` | Entities left out of the database: `sensor.proxy_probe_bursts` |
 | `_yaml/scenes.yaml` | Empty |
 | `_yaml/shell_command.yaml` | The three modes of `scripts/arr_guard.py`, and `scripts/unban_address.py`, which removes one address from `ip_bans.yaml`, and `proxy_unblock`, which lifts a block at the proxy |
 | `_yaml/switch.yaml` | GPIO switch for the Pi's cooling fan |
