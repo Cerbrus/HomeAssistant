@@ -41,6 +41,7 @@ One file per decision, numbered in the order the decisions were taken. A decisio
 | [0033](0033-locate-probing-addresses-online.md) | 2026-11-26 | Locate probing addresses with an online lookup | Recorded |
 | [0034](0034-block-password-guessing-at-the-proxy.md) | 2026-11-26 | Block password guessing at the proxy | Recorded |
 | [0035](0035-check-the-certificates-that-are-served.md) | 2026-11-26 | Check the certificates that the proxy actually serves | Recorded |
+| [0036](0036-log-requests-before-the-redirect.md) | 2026-11-26 | Log a redirected request as it came in, not the page it lands on | Recorded |
 
 "Backfilled" ADRs were written on 2026-11-21 from the configuration and git history, and their rationale was confirmed by the owner afterwards; the date is when the decision took effect.
 

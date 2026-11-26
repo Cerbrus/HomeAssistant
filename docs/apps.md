@@ -29,16 +29,23 @@ The theme only applies through the proxy host; the direct admin port shows the s
 
 ### Shared Nginx snippets
 
-Two files in the `nginx/custom` folder of the proxy's configuration are not managed through its interface. They are part of the app's backup and not of this repository.
+Four files in the `nginx/custom` folder of the proxy's configuration are not managed through its interface. They are part of the app's backup and not of this repository.
 
 `server_proxy.conf` is included by every proxy host:
 
 - It answers errors that the proxy itself produces with the matching page of `error.cerbrus.nl`, in place ([ADR-0030](adr/0030-proxy-error-pages-in-place.md)).
 - It writes a second access log, `probes_access.log`, and serves that file to the LAN only.
 
-`http_top.conf` defines that log: one JSON line per request that came from an outside address and got a 4xx answer, with time, address, host name, method, path, status and user agent. The path is the one that was requested, without the query string, also when the proxy answered with its own error page. The app's own log rotation covers the file because its name ends in `_access.log`; it is lost when the app is reinstalled.
+`http_top.conf` defines that log: one JSON line per request that came from an outside address and got a 4xx answer or a redirect for an unmatched host name, with time, address, host name, method, path, status and user agent. The path is the one that was requested, without the query string, also when the proxy answered with its own error page. The app's own log rotation covers the file because its name ends in `_access.log`; it is lost when the app is reinstalled.
 
-`scripts/probe_stats.py` reads the log from the proxy and condenses it into `sensor.proxy_probes_today`; `scripts/probe_bursts.py` groups the same log into bursts per address for `sensor.proxy_probe_bursts`. Both feed the Security view ([dashboards.md](dashboards.md), [ADR-0031](adr/0031-probe-log-and-security-view.md)). It looks up the country and city of the addresses it shows at ip-api.com and caches the answers for 30 days ([ADR-0033](adr/0033-locate-probing-addresses-online.md)). The count is an indication, not a verdict: an own device outside the home that gets a 401 or 404 is counted too. Requests that match no proxy host are not in the log.
+Two more snippets log a request that no proxy host matches as it came in, before its redirect ([ADR-0036](adr/0036-log-requests-before-the-redirect.md)):
+
+- `server_redirect.conf` is included by the redirection host for unknown subdomains and writes its requests to the probe log.
+- `http.conf` holds a server block that catches every request that no proxy host and no redirection host claims: by address, with a foreign host name or without one. It logs the request and redirects to `https://error.cerbrus.nl/404`. It outranks the Default Site of the proxy's interface, so that setting no longer does anything.
+
+The pages those redirects end on, `404.cerbrus.nl/` and `error.cerbrus.nl/404`, are left out of the log.
+
+`scripts/probe_stats.py` reads the log from the proxy and condenses it into `sensor.proxy_probes_today`; `scripts/probe_bursts.py` groups the same log into bursts per address for `sensor.proxy_probe_bursts`. Both feed the Security view ([dashboards.md](dashboards.md), [ADR-0031](adr/0031-probe-log-and-security-view.md)). It looks up the country and city of the addresses it shows at ip-api.com and caches the answers for 30 days ([ADR-0033](adr/0033-locate-probing-addresses-online.md)). The count is an indication, not a verdict: an own device outside the home that gets a 401 or 404 is counted too. Requests over HTTPS for an unknown host name are not in the log: the proxy refuses the handshake.
 
 ### Blocking and certificates
 
