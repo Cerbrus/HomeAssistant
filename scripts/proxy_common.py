@@ -1,11 +1,14 @@
 import json
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 
 PROXY = "https://proxy.cerbrus.nl"
 PROBE_LOG = f"{PROXY}/__probes"
 SECRETS = "/config/secrets.yaml"
 GEO_CACHE = "/config/.probe_geo_cache.json"
+GEO_LOOKUP = "http://ip-api.com/batch?fields=status,country,countryCode,city,query"
+GEO_BATCH = 100
+GEO_DAYS = 30
 IDENTITY = "npm_identity"
 SECRET = "npm_secret"
 TIMEOUT = 20
@@ -69,3 +72,43 @@ def cached_places():
             return json.load(file)
     except (OSError, ValueError):
         return {}
+
+
+def cached_locations(now):
+    try:
+        with open(GEO_CACHE, encoding="utf-8") as file:
+            cache = json.load(file)
+    except (OSError, ValueError):
+        return {}
+    oldest = (now - timedelta(days=GEO_DAYS)).isoformat()
+    return {address: place for address, place in cache.items() if place["at"] >= oldest}
+
+
+def lookup(addresses):
+    request = urllib.request.Request(
+        GEO_LOOKUP,
+        data=json.dumps(addresses[:GEO_BATCH]).encode(),
+        method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+        return json.load(response)
+
+
+def locations(addresses, now):
+    cache = cached_locations(now)
+    unknown = [address for address in dict.fromkeys(addresses) if address not in cache]
+    if unknown:
+        try:
+            for place in lookup(unknown):
+                cache[place["query"]] = {
+                    "country": place.get("country", ""),
+                    "code": place.get("countryCode", "").lower(),
+                    "city": place.get("city", ""),
+                    "at": now.isoformat(),
+                }
+            with open(GEO_CACHE, "w", encoding="utf-8") as file:
+                json.dump(cache, file)
+        except (OSError, ValueError, KeyError):
+            pass
+    return cache

@@ -4,7 +4,7 @@ import sys
 from collections import Counter
 from datetime import datetime, timedelta
 
-from proxy_common import cached_places, probes
+from proxy_common import locations, probes
 
 RECENT = 15
 PATH_LENGTH = 64
@@ -58,10 +58,11 @@ def main():
     now = datetime.now().astimezone()
     day_ago = now - timedelta(hours=24)
     found = bursts(probe for probe in probes() if probe["at"] >= day_ago)
-    places = cached_places()
+    recent = found[:RECENT]
+    places = locations([burst["address"] for burst in recent], now)
     print(json.dumps({
         "count": len(found),
-        "bursts": [summary(burst, places) for burst in found[:RECENT]],
+        "bursts": [summary(burst, places) for burst in recent],
         "updated": now.isoformat(timespec="seconds"),
     }))
 

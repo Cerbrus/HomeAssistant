@@ -2,17 +2,12 @@
 import json
 import re
 import sys
-import urllib.request
 from collections import Counter
 from datetime import datetime, timedelta
 
-from proxy_common import GEO_CACHE, probes
+from proxy_common import locations, probes
 
 IP_BANS = "/config/ip_bans.yaml"
-GEO_LOOKUP = "http://ip-api.com/batch?fields=status,country,countryCode,city,query"
-GEO_BATCH = 100
-GEO_DAYS = 30
-TIMEOUT = 20
 TOP = 6
 PATH_LENGTH = 60
 BAN_KEY = re.compile(r"^([0-9a-fA-F.:]+):\s*$")
@@ -28,46 +23,6 @@ def bans():
 
 def top(counter):
     return [{"name": name, "count": count} for name, count in counter.most_common(TOP)]
-
-
-def cached_locations(now):
-    try:
-        with open(GEO_CACHE, encoding="utf-8") as file:
-            cache = json.load(file)
-    except (OSError, ValueError):
-        return {}
-    oldest = (now - timedelta(days=GEO_DAYS)).isoformat()
-    return {address: place for address, place in cache.items() if place["at"] >= oldest}
-
-
-def lookup(addresses):
-    request = urllib.request.Request(
-        GEO_LOOKUP,
-        data=json.dumps(addresses[:GEO_BATCH]).encode(),
-        method="POST",
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
-        return json.load(response)
-
-
-def locations(addresses, now):
-    cache = cached_locations(now)
-    unknown = [address for address in dict.fromkeys(addresses) if address not in cache]
-    if unknown:
-        try:
-            for place in lookup(unknown):
-                cache[place["query"]] = {
-                    "country": place.get("country", ""),
-                    "code": place.get("countryCode", "").lower(),
-                    "city": place.get("city", ""),
-                    "at": now.isoformat(),
-                }
-            with open(GEO_CACHE, "w", encoding="utf-8") as file:
-                json.dump(cache, file)
-        except (OSError, ValueError, KeyError):
-            pass
-    return cache
 
 
 def located(row, address, places):

@@ -1325,16 +1325,17 @@ config:
         heading: Latest probes
         icon: mdi:format-list-bulleted
       - type: markdown
-        content: <table width="100%"><tr><th align="left">Start</th><th align="right">Duration</th><th align="right">Requests</th><th
-          align="left">Address</th><th align="left" colspan="2">Country</th><th align="left">City</th><th align="left">Host
-          names</th><th align="left">Paths</th><th align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probe_bursts',
-          'bursts') or [] %}<tr><td>{{ row.time }}</td><td align="right">{% if row.seconds >= 60 %}{{ row.seconds // 60 }}
-          min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td align="right">{{ row.count }}</td><td>{{
-          row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code |
-          upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td><td>{{ row.hosts | join(', ') }}{% if
-          row.more_hosts %} +{{ row.more_hosts }}{% endif %}</td><td>{% if row.requests %}<a href="#burst-{{ loop.index0 }}"><code>{{
-          row.path | e }}</code> +{{ row.unique - 1 }}</a>{% else %}<code>{{ row.path | e }}</code>{% endif %}</td><td align="right">{{
-          row.statuses | join(', ') }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
+        content: <table width="100%"><tr><th align="left">Start</th><th align="right">Duration</th><th align="left">Address</th><th
+          align="left" colspan="2">Country</th><th align="left">City</th><th align="left">Host names</th><th align="left">Paths</th><th
+          align="right">Status</th></tr>{% for row in state_attr('sensor.proxy_probe_bursts', 'bursts') or [] %}<tr><td>{{
+          row.time | replace(' ', '&nbsp;') | replace('-', '&#8209;') }}</td><td align="right">{% if row.count == 1 %}-{%
+          else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }}&nbsp;min&nbsp;{{ row.seconds % 60 }}&nbsp;s{% else %}{{
+          row.seconds }}&nbsp;s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{
+          row.code }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country | replace(' ', '&nbsp;')
+          }}</td><td>{{ row.city | replace(' ', '&nbsp;') }}</td><td>{{ row.hosts | join(', ') }}{% if row.more_hosts %} +{{
+          row.more_hosts }}{% endif %}</td><td>{% if row.requests %}<a href="#burst-{{ loop.index0 }}"><code>{{ row.path |
+          e }}</code> +{{ row.unique - 1 }}</a>{% else %}<code>{{ row.path | e }}</code>{% endif %}{% if row.count > 1 %}
+          ×{{ row.count }}{% endif %}</td><td align="right">{{ row.statuses | join(', ') }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
           endfor %}</table>
         grid_options:
           columns: full
@@ -1412,10 +1413,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 0 %}{%
             set row = rows[0] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1436,10 +1437,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 1 %}{%
             set row = rows[1] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1460,10 +1461,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 2 %}{%
             set row = rows[2] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1484,10 +1485,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 3 %}{%
             set row = rows[3] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1508,10 +1509,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 4 %}{%
             set row = rows[4] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1532,10 +1533,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 5 %}{%
             set row = rows[5] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1556,10 +1557,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 6 %}{%
             set row = rows[6] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1580,10 +1581,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 7 %}{%
             set row = rows[7] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1604,10 +1605,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 8 %}{%
             set row = rows[8] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1628,10 +1629,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 9 %}{%
             set row = rows[9] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1652,10 +1653,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 10 %}{%
             set row = rows[10] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1676,10 +1677,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 11 %}{%
             set row = rows[11] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1700,10 +1701,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 12 %}{%
             set row = rows[12] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1724,10 +1725,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 13 %}{%
             set row = rows[13] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
@@ -1748,10 +1749,10 @@ config:
         - type: markdown
           content: '{% set rows = state_attr(''sensor.proxy_probe_bursts'', ''bursts'') or [] %}{% if rows | count > 14 %}{%
             set row = rows[14] %}<table width="100%"><tr><th align="left">Start</th><th align="left">Duration</th><th align="left">Address</th><th
-            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.seconds
-            >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td>{{
-            row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code
-            | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
+            align="left" colspan="2">Country</th><th align="left">City</th></tr><tr><td>{{ row.time }}</td><td>{% if row.count
+            == 1 %}-{% else %}{% if row.seconds >= 60 %}{{ row.seconds // 60 }} min {{ row.seconds % 60 }} s{% else %}{{ row.seconds
+            }} s{% endif %}{% endif %}</td><td>{{ row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code
+            }}.png" width="20" alt="{{ row.code | upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td></tr></table>
 
 
             **{{ row.count }} {{ ''request'' if row.count == 1 else ''requests'' }}, {{ row.unique }} unique**
