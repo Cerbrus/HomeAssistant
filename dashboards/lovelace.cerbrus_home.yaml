@@ -1265,11 +1265,7 @@ config:
           action: none
       - type: markdown
         content: '**{{ state_attr(''sensor.proxy_probes_today'', ''last_24h'') | default(0, true) }}** requests from **{{
-          state_attr(''sensor.proxy_probes_today'', ''addresses_24h'') | default(0, true) }}** outside addresses were refused
-          in the last 24 hours.
-
-
-          Counted: requests from outside the home that the proxy answered with a 4xx status.'
+          state_attr(''sensor.proxy_probes_today'', ''addresses_24h'') | default(0, true) }}** addresses refused in 24 hours.'
         grid_options:
           columns: full
       - type: statistics-graph
