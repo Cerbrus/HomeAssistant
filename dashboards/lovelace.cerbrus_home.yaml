@@ -1289,9 +1289,12 @@ config:
           min {{ row.seconds % 60 }} s{% else %}{{ row.seconds }} s{% endif %}</td><td align="right">{{ row.count }}</td><td>{{
           row.address }}</td><td>{% if row.code %}<img src="/local/flags/{{ row.code }}.png" width="20" alt="{{ row.code |
           upper }}">{% endif %}</td><td>{{ row.country }}</td><td>{{ row.city }}</td><td>{{ row.hosts | map('replace', '.cerbrus.nl',
-          '') | join(', ') }}{% if row.more_hosts %} +{{ row.more_hosts }}{% endif %}</td><td><code>{{ row.path | e }}</code>{%
-          if row.paths > 1 %} +{{ row.paths - 1 }}{% endif %}</td><td align="right">{{ row.statuses | join(', ') }}</td></tr>{%
-          else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
+          '') | join(', ') }}{% if row.more_hosts %} +{{ row.more_hosts }}{% endif %}</td><td>{% if row.detail %}<details><summary><code>{{
+          row.path | e }}</code>{% if row.paths > 1 %} +{{ row.paths - 1 }}{% endif %}</summary><table width="100%">{% for
+          request in row.detail %}<tr><td><code>{{ request.p | e }}</code></td><td>{{ request.h }}</td><td align="right">{{
+          request.s }}</td><td align="right">{{ request.n }}×</td></tr>{% endfor %}</table>{% if row.more %}and {{ row.more
+          }} more{% endif %}</details>{% else %}<code>{{ row.path | e }}</code>{% if row.paths > 1 %} +{{ row.paths - 1 }}{%
+          endif %}{% endif %}</td><td align="right">{{ row.statuses | join(', ') }}</td></tr>{% else %}<tr><td>None</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{%
           endfor %}</table>
         grid_options:
           columns: full

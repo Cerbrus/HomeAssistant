@@ -18,6 +18,9 @@ RECENT = 15
 PATH_LENGTH = 60
 BURST_GAP = 120
 BURST_HOSTS = 3
+BURST_DETAILS = 10
+ATTRIBUTE_BYTES = 14000
+DOMAIN = ".cerbrus.nl"
 BAN_KEY = re.compile(r"^([0-9a-fA-F.:]+):\s*$")
 
 
@@ -108,11 +111,27 @@ def bursts(probes):
     return sorted(found, key=lambda burst: burst["start"], reverse=True)
 
 
-def summary(burst):
+def details(probes, limit):
+    requests = Counter(
+        (probe["p"][:PATH_LENGTH], probe["h"].removesuffix(DOMAIN), probe["s"])
+        for probe in probes
+    )
+    if len(requests) < 2:
+        return [], 0
+    return [
+        {"p": path, "h": host, "s": status, "n": count}
+        for (path, host, status), count in requests.most_common(limit)
+    ], max(len(requests) - limit, 0)
+
+
+def summary(burst, limit):
     probes = burst["probes"]
     hosts = [name for name, _ in Counter(probe["h"] for probe in probes).most_common()]
     paths = Counter(probe["p"][:PATH_LENGTH] for probe in probes)
+    detail, more = details(probes, limit)
     return {
+        "detail": detail,
+        "more": more,
         "time": burst["start"].strftime("%d-%m %H:%M:%S"),
         "seconds": round((burst["end"] - burst["start"]).total_seconds()),
         "count": len(probes),
@@ -144,6 +163,10 @@ def main():
     places = locations(
         [row["name"] for row in addresses] + [burst["address"] for burst in recent], now
     )
+    for limit in range(BURST_DETAILS, -1, -1):
+        rows = [located(summary(burst, limit), burst["address"], places) for burst in recent]
+        if len(json.dumps(rows)) < ATTRIBUTE_BYTES:
+            break
     print(json.dumps({
         "today": today,
         "last_24h": len(last_day),
@@ -151,7 +174,7 @@ def main():
         "hosts": top(Counter(probe["h"] for probe in last_day)),
         "addresses": [located(row, row["name"], places) for row in addresses],
         "paths": top(Counter(probe["p"][:PATH_LENGTH] for probe in last_day)),
-        "recent": [located(summary(burst), burst["address"], places) for burst in recent],
+        "recent": rows,
         "bans": len(banned),
         "banned": banned,
         "updated": now.isoformat(timespec="seconds"),
