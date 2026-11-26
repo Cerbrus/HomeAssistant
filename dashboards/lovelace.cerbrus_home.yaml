@@ -1273,17 +1273,17 @@ config:
         grid_options:
           columns: full
       - type: statistics-graph
-        title: Per day
+        grid_options:
+          columns: full
         entities:
         - sensor.proxy_probes_today
-        chart_type: bar
-        period: day
-        days_to_show: 30
+        title: Per hour
+        days_to_show: 7
+        period: hour
+        chart_type: line-stack
         stat_types:
         - change
         hide_legend: true
-        grid_options:
-          columns: full
     - type: grid
       column_span: 2
       cards:
