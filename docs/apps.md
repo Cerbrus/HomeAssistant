@@ -38,7 +38,7 @@ Two files in the `nginx/custom` folder of the proxy's configuration are not mana
 
 `http_top.conf` defines that log: one JSON line per request that came from an outside address and got a 4xx answer, with time, address, host name, method, path, status and user agent. The path is the one that was requested, without the query string, also when the proxy answered with its own error page. The app's own log rotation covers the file because its name ends in `_access.log`; it is lost when the app is reinstalled.
 
-`scripts/probe_stats.py` reads the log from the proxy and condenses it into `sensor.proxy_probes_today`, which feeds the Security view ([dashboards.md](dashboards.md), [ADR-0031](adr/0031-probe-log-and-security-view.md)). It looks up the country and city of the addresses it shows at ip-api.com and caches the answers for 30 days ([ADR-0033](adr/0033-locate-probing-addresses-online.md)). The count is an indication, not a verdict: an own device outside the home that gets a 401 or 404 is counted too. Requests that match no proxy host are not in the log.
+`scripts/probe_stats.py` reads the log from the proxy and condenses it into `sensor.proxy_probes_today`; `scripts/probe_bursts.py` groups the same log into bursts per address for `sensor.proxy_probe_bursts`. Both feed the Security view ([dashboards.md](dashboards.md), [ADR-0031](adr/0031-probe-log-and-security-view.md)). It looks up the country and city of the addresses it shows at ip-api.com and caches the answers for 30 days ([ADR-0033](adr/0033-locate-probing-addresses-online.md)). The count is an indication, not a verdict: an own device outside the home that gets a 401 or 404 is counted too. Requests that match no proxy host are not in the log.
 
 ### Blocking and certificates
 
