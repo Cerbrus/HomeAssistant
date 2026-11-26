@@ -45,6 +45,6 @@ The Tuya devices are reached by address on the LAN. Only the freezer socket has 
 | --- | --- |
 | Person `Cerbrus` | Tracked by the phone's Mobile App device tracker |
 | Person `HA-MCP` | Service account for HA-MCP, no tracker |
-| Zone Home | Arrival opens the shutters |
+| Zone Home | Arrival opens the shutters; being in it at 09:00 on a workday switches the heating to the At home program |
 | Zone Goor | Leaving it closes the shutters and turns the heating's away mode on; entering it turns away mode off |
 | Zone Work | Not used in automations |
