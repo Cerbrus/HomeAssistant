@@ -1009,6 +1009,16 @@ config:
       - type: heading
         heading: Pi-hole
         icon: mdi:pi-hole
+      - type: picture-entity
+        entity: camera.pi_hole_display
+        camera_view: auto
+        fit_mode: contain
+        aspect_ratio: '53:26'
+        show_name: false
+        show_state: false
+        grid_options:
+          columns: full
+          rows: auto
       - type: custom:pi-hole
         device_id: 1a974a6849eca19d46e0e4bb147990de
         chart:

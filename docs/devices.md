@@ -25,6 +25,7 @@
 | Utility room | Power socket - Freezer | Tuya Local | `switch.power_socket_freezer` |
 | Utility room | 3D printer | OctoPrint | Usually off |
 | Network | Pi-hole | Pi-hole | |
+| Network | Pi-hole display | Generic Camera | `camera.pi_hole_display`, shown above the Pi-hole card on the System view |
 | Media | Plex server, Radarr, Sonarr, Transmission | Plex Media Server, Radarr, Sonarr, Transmission | Service devices of the media apps |
 | No area | EasyControl gateway, heating zone, boiler, hot water tank | Bosch | |
 | No area | Solar inverter | SolisCloud | |

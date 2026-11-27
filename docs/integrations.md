@@ -17,6 +17,7 @@
 | OctoPrint | Core | UI | 3D printer, unavailable while the printer is off |
 | IPP | Core | UI | Printer ink levels |
 | Pi-hole | Core | UI | DNS statistics and switch |
+| Generic Camera | Core | UI | The screen of the e-paper display on the Pi-hole as a picture, drawn by the display itself with fresh numbers at most every 2 minutes |
 | Raspberry Pi GPIO | Marketplace | `_yaml/switch.yaml` | Cooling fan switch |
 | Plex Media Server | Core | UI | Number of active streams; a media player per client while it plays |
 | Radarr, Sonarr | Core | UI | Upcoming movies and episodes as calendars, health, queue |
