@@ -15,6 +15,7 @@ command_line: !include _yaml/command_line.yaml
 input_number: !include _yaml/input_number.yaml
 light: !include _yaml/light.yaml
 recorder: !include _yaml/recorder.yaml
+rest_command: !include _yaml/rest_command.yaml
 panel_custom: !include _yaml/panel_custom.yaml
 scene: !include _yaml/scenes.yaml
 shell_command: !include _yaml/shell_command.yaml
