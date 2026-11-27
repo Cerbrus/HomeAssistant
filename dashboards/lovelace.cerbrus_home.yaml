@@ -1019,11 +1019,15 @@ config:
         grid_options:
           columns: full
           rows: auto
+        hold_action:
+          action: perform-action
+          perform_action: rest_command.pi_hole_display_refresh
       - type: custom:pi-hole
         device_id: 1a974a6849eca19d46e0e4bb147990de
         chart:
           line_type: gradient_no_fill
-        features: []
+        features:
+        - ha_integration
         collapsed_sections:
         - switches
         - pause
@@ -1032,6 +1036,7 @@ config:
         grid_options:
           columns: full
           rows: auto
+        title: ''
     - type: grid
       cards:
       - type: heading
